@@ -634,12 +634,12 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 			pWnd->m_PTZ.GetDlgItem(IDC_BTN_PRE)->EnableWindow(TRUE);
 			pWnd->m_VideoQuery.GetDlgItem(IDC_BTN_QUERY)->EnableWindow(TRUE);
 			pWnd->m_VideoPlay.GetDlgItem(IDC_BTN_START)->EnableWindow(TRUE);
-			//pWnd->m_CoderSet.GetDlgItem(IDC_BTN_SET)->EnableWindow(TRUE);
 			pWnd->m_Alarm.GetDlgItem(IDC_BTN_ALARM_SET)->EnableWindow(TRUE);
 			pWnd->m_Alarm.GetDlgItem(IDC_BTN_TIMESET)->EnableWindow(TRUE);
 			pWnd->m_CatalogQuery.GetDlgItem(IDC_QUERY)->EnableWindow(TRUE);
 			pWnd->m_DeviceInfQuery.GetDlgItem(IDC_DEVICEINFQUERY)->EnableWindow(TRUE);
 			pWnd->m_FlowQuery.GetDlgItem(IDC_FLOWQUERY)->EnableWindow(TRUE);
+			pWnd->m_CoderSet.GetDlgItem(IDC_BTN_SET)->EnableWindow(TRUE);
 
 			string strTemp(buffer);
 			string temp;
@@ -3055,15 +3055,20 @@ void CSipMsgProcess::SipEncoderSetMsg(char **dstInvite, InfoServer m_InfoServer,
 	osip_via_set_version(SipHeader->m_SipMsg.via, "2.0");
 	osip_via_set_protocol(SipHeader->m_SipMsg.via, "UDP");
 	osip_via_set_port(SipHeader->m_SipMsg.via, srcPort);
-	//osip_via_set_branch(via,"123456789");//随机数	
-	// 	RandData=rand();	
-	// 	char sdtr[8];	
-	// 	char branch[20];
-	// 	itoa(RandData,sdtr,16);
-	// 	strcpy(branch,"z9hG4bK-");
-	// 	strcat(branch,sdtr);
-	// 	osip_via_set_branch(SipHeader->m_SipMsg.via,branch);//随机数
-	//osip_via_set_branch(SipHeader->m_SipMsg.via,"z9hG4bK--22bd7321");//随机数
+	//RandData=rand();	
+	//char sdtr[8];	
+	//char branch[20];
+	//itoa(RandData,sdtr,16);
+	//strcpy(branch,"z9hG4bK-");
+	//strcat(branch,sdtr);
+
+	char branch[20] = "z9hG4bK";
+	for (int i = 0; i < 8; i++)
+	{
+		RandData = rand() % 10;
+		branch[i + 7] = RandData + '0';
+	}
+	osip_via_set_branch(SipHeader->m_SipMsg.via,branch);//随机数
 	osip_via_set_host(SipHeader->m_SipMsg.via, srcIP);
 	osip_call_id_set_host(SipHeader->m_SipMsg.callid, srcIP);
 	osip_call_id_set_number(SipHeader->m_SipMsg.callid, CallID);//随机数

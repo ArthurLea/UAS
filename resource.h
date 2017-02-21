@@ -145,6 +145,7 @@
 #define IDC_COMBO_IP                    1106
 #define IDC_PTZRIGHT                    1107
 #define IDC_EDIT1                       1107
+#define IDC_EDIT_IMAGEQUALITY           1107
 #define IDC_PTZUP2                      1108
 #define IDC_PTZUP3                      1109
 #define IDC_PTZUP4                      1110
@@ -156,7 +157,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        149
+#define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1108
 #define _APS_NEXT_SYMED_VALUE           101

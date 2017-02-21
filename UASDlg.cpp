@@ -226,11 +226,11 @@ BOOL CUASDlg::OnInitDialog()
 	InitPTZ();
 	InitHistoryVideoQuery();
 	InitHistoryVideoPlay();
-	//InitCoderSet();
 	InitAlarm();
 	InitCatalogQuery();
 	InitDeviceInfQuery();
 	InitFlowQuery();
+	InitCoderSet();
 	InitEnableWindow();
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -361,22 +361,22 @@ void CUASDlg::InitProgram()
 	m_Ctab.InsertItem(2, _T("云台控制"));
 	m_Ctab.InsertItem(3, _T("视频查询"));
 	m_Ctab.InsertItem(4, _T("视频回放"));
-	//m_Ctab.InsertItem(5,_T("编码器设置"));
 	m_Ctab.InsertItem(5, _T("报警测试"));
 	m_Ctab.InsertItem(6, _T("目录查询"));
 	m_Ctab.InsertItem(7, _T("设备信息查询"));
 	m_Ctab.InsertItem(8, _T("流量查询"));
+	m_Ctab.InsertItem(9,_T("编码器设置"));
 	//为标签页添加初始化对话框
 	m_NetSet.Create(IDD_DLG_NETSET, GetDlgItem(IDC_TAB));
 	m_Invite.Create(IDD_DLG_INVITE, GetDlgItem(IDC_TAB));
 	m_PTZ.Create(IDD_DLG_PTZ, GetDlgItem(IDC_TAB));
 	m_VideoQuery.Create(IDD_DLG_VIDEOQUERY, GetDlgItem(IDC_TAB));
 	m_VideoPlay.Create(IDD_DLG_VIDEOPLAY, GetDlgItem(IDC_TAB));
-	//m_CoderSet.Create(IDD_DLG_CODERSET,GetDlgItem(IDC_TAB));
 	m_Alarm.Create(IDD_DLG_ALARM, GetDlgItem(IDC_TAB));
 	m_CatalogQuery.Create(IDD_DLG_CATALOGUREQUERY, GetDlgItem(IDC_TAB));
 	m_DeviceInfQuery.Create(IDD_DLG_DEVICEINFQUERY, GetDlgItem(IDC_TAB));
 	m_FlowQuery.Create(IDD_DLG_FLOWQUERY, GetDlgItem(IDC_TAB));
+	m_CoderSet.Create(IDD_DLG_CODERSET,GetDlgItem(IDC_TAB));
 	//获得IDC_TAB客户区大小
 	CRect rect;
 	m_Ctab.GetClientRect(&rect);
@@ -391,11 +391,11 @@ void CUASDlg::InitProgram()
 	m_PTZ.MoveWindow(&rect);
 	m_VideoQuery.MoveWindow(&rect);
 	m_VideoPlay.MoveWindow(&rect);
-	//m_CoderSet.MoveWindow(&rect);
 	m_Alarm.MoveWindow(&rect);
 	m_CatalogQuery.MoveWindow(&rect);
 	m_DeviceInfQuery.MoveWindow(&rect);
 	m_FlowQuery.MoveWindow(&rect);
+	m_CoderSet.MoveWindow(&rect);
 	//分别设置隐藏和显示
 	m_NetSet.ShowWindow(true);
 	//设置默认的选项卡
@@ -451,11 +451,11 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
 	case 1:
 		m_NetSet.ShowWindow(false);
@@ -463,11 +463,11 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
 	case 2:
 		m_NetSet.ShowWindow(false);
@@ -475,11 +475,11 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(true);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
 	case 3:
 		m_NetSet.ShowWindow(false);
@@ -487,11 +487,11 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(true);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
 	case 4:
 		m_NetSet.ShowWindow(false);
@@ -499,35 +499,23 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(true);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
-		// 	case 5:	
-		// 		m_NetSet.ShowWindow(false);
-		// 		m_Invite.ShowWindow(false);
-		// 		m_PTZ.ShowWindow(false);
-		// 		m_VideoQuery.ShowWindow(false);
-		// 		m_VideoPlay.ShowWindow(false);
-		// 		m_CoderSet.ShowWindow(true);	
-		// 		m_Alarm.ShowWindow(false);
-		// 		m_CatalogQuery.ShowWindow(false);
-		// 		m_DeviceInfQuery.ShowWindow(false);
-		// 		m_FlowQuery.ShowWindow(false);
-		// 		break;	
 	case 5:
 		m_NetSet.ShowWindow(false);
 		m_Invite.ShowWindow(false);
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(true);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
 	case 6:
 		m_NetSet.ShowWindow(false);
@@ -535,11 +523,11 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(true);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
 	case 7:
 		m_NetSet.ShowWindow(false);
@@ -547,11 +535,11 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(true);
 		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);	
 		break;
 	case 8:
 		m_NetSet.ShowWindow(false);
@@ -559,11 +547,23 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_PTZ.ShowWindow(false);
 		m_VideoQuery.ShowWindow(false);
 		m_VideoPlay.ShowWindow(false);
-		//m_CoderSet.ShowWindow(false);	
 		m_Alarm.ShowWindow(false);
 		m_CatalogQuery.ShowWindow(false);
 		m_DeviceInfQuery.ShowWindow(false);
 		m_FlowQuery.ShowWindow(true);
+		m_CoderSet.ShowWindow(false);	
+		break;
+	case 9:
+		m_NetSet.ShowWindow(false);
+		m_Invite.ShowWindow(false);
+		m_PTZ.ShowWindow(false);
+		m_VideoQuery.ShowWindow(false);
+		m_VideoPlay.ShowWindow(false);
+		m_Alarm.ShowWindow(false);
+		m_CatalogQuery.ShowWindow(false);
+		m_DeviceInfQuery.ShowWindow(false);
+		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(true);	
 		break;
 	default:
 		break;
@@ -746,7 +746,8 @@ void CUASDlg::InitCoderSet()
 	m_CoderSet.GetDlgItem(IDC_EDT_BITRATE)->SetWindowText("300");
 	m_CoderSet.GetDlgItem(IDC_EDT_PRIORITY)->SetWindowText("0");
 	m_CoderSet.GetDlgItem(IDC_EDT_GOP)->SetWindowText("8");
-	m_CoderSet.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
+	m_CoderSet.GetDlgItem(IDC_EDIT_IMAGEQUALITY)->SetWindowText("高");
+	m_CoderSet.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001199000001");
 }
 
 //初始化报警测试属性页
@@ -796,15 +797,15 @@ void CUASDlg::InitEnableWindow()
 	m_PTZ.GetDlgItem(IDC_BTN_PRE)->EnableWindow(FALSE);
 	m_VideoQuery.GetDlgItem(IDC_BTN_QUERY)->EnableWindow(TRUE); //YWD
 	m_VideoQuery.GetDlgItem(IDC_BTN_GETURL)->EnableWindow(FALSE);
-	//m_VideoPlay.GetDlgItem(IDC_BTN_START)->EnableWindow(FALSE);
+	m_VideoPlay.GetDlgItem(IDC_BTN_START)->EnableWindow(FALSE);
 	m_VideoPlay.GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
 	m_VideoPlay.GetDlgItem(IDC_BTN_STOP)->EnableWindow(FALSE);
-	//m_CoderSet.GetDlgItem(IDC_BTN_SET)->EnableWindow(FALSE);
 	m_Alarm.GetDlgItem(IDC_BTN_ALARM_SET)->EnableWindow(FALSE);
 	m_Alarm.GetDlgItem(IDC_BTN_TIMESET)->EnableWindow(FALSE);
 	m_CatalogQuery.GetDlgItem(IDC_QUERY)->EnableWindow(FALSE);
 	m_DeviceInfQuery.GetDlgItem(IDC_DEVICEINFQUERY)->EnableWindow(FALSE);
 	m_FlowQuery.GetDlgItem(IDC_FLOWQUERY)->EnableWindow(FALSE);
+	m_CoderSet.GetDlgItem(IDC_BTN_SET)->EnableWindow(FALSE);
 }
 
 int CUASDlg::InitSocket(int port)

@@ -73,19 +73,21 @@ void CCoderSet::OnBnClickedBtnSet()
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	//get information and create XML message
-	CString UserCode;
+	CString Privilege;
 	CString Format;
 	CString FrameRate;
 	CString BitRate;
 	CString Priority;
 	CString GOP;
+	CString ImageQuality;
 	CString address;
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(Privilege);
 	GetDlgItem(IDC_EDT_FORMAT)->GetWindowText(Format);
 	GetDlgItem(IDC_EDT_FRAME)->GetWindowText(FrameRate);
 	GetDlgItem(IDC_EDT_BITRATE)->GetWindowText(BitRate);
 	GetDlgItem(IDC_EDT_PRIORITY)->GetWindowText(Priority);
-	GetDlgItem(IDC_EDT_GOP)->GetWindowText(GOP);	
+	GetDlgItem(IDC_EDT_GOP)->GetWindowText(GOP);
+	GetDlgItem(IDC_EDIT_IMAGEQUALITY)->GetWindowText(ImageQuality);
 	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(address);
 	pWnd->encodeAddress=address;
 	CString XmlCoderSet;
@@ -93,12 +95,13 @@ void CCoderSet::OnBnClickedBtnSet()
 	XmlCoderSet+="<Action>\r\n";
 	XmlCoderSet+="<Notify>\r\n";
 	XmlCoderSet+="<Variable>EncoderSet</Variable>\r\n";	
-	XmlCoderSet+="<Privilege>"+UserCode+"</Privilege>\r\n";
+	XmlCoderSet+="<Privilege>"+ Privilege +"</Privilege>\r\n";
 	XmlCoderSet+="<Format>"+Format+"</Format>\r\n";
 	XmlCoderSet+="<FrameRate>"+FrameRate+"</FrameRate>\r\n";
 	XmlCoderSet+="<BitRate>"+BitRate+"</BitRate>\r\n";
 	XmlCoderSet+="<Priority>"+Priority+"</Priority>\r\n";
-	XmlCoderSet+="<GOP>"+GOP+"</GOP>\r\n";	
+	XmlCoderSet += "<GOP>" + GOP + "</GOP>\r\n";
+	XmlCoderSet+="<ImageQuality>"+ ImageQuality +"</ImageQuality>\r\n";
 	XmlCoderSet+="</Notify>\r\n";
 	XmlCoderSet+="</Action>\r\n";	
 	char *destXMLCoderSet = (LPSTR)(LPCTSTR)XmlCoderSet;		
@@ -124,5 +127,5 @@ void CCoderSet::OnBnClickedBtnSet()
 	//update log	
 	ShowTestData=" DO  ---------->\r\n";
 	ShowTestTitle="Encoder Set Test";
-	SCallId.nStatus=EncoderSet;
+	SCallId.nStatus = EncoderSet;
 }
