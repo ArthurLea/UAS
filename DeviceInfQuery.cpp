@@ -42,7 +42,6 @@ BEGIN_MESSAGE_MAP(CDeviceInfQuery, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_SELADRESS, &CDeviceInfQuery::OnCbnSelchangeSeladress)
 END_MESSAGE_MAP()
 
-
 // CDeviceInfQuery 消息处理程序
 
 void CDeviceInfQuery::OnBnClickedDeviceinfquery()
