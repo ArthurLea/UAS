@@ -763,15 +763,15 @@ void CUASDlg::InitAlarm()
 void CUASDlg::InitCatalogQuery()
 {
 	m_CatalogQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("%00%00%02");
-	m_CatalogQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
+	m_CatalogQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001199000001");//UAC 地址编码 252000001199000001
 }
 
 void CUASDlg::InitDeviceInfQuery()
 {
 	m_DeviceInfQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("%12%01");
-	m_DeviceInfQuery.GetDlgItem(IDC_SELADRESS)->SetWindowText("Cam 01");
+	m_DeviceInfQuery.GetDlgItem(IDC_SELADRESS)->SetWindowText("Catalog");
 	m_DeviceInfQuery.m_selAddress.SetCurSel(0);
-	m_DeviceInfQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001201001001");
+	m_DeviceInfQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001101001001");
 }
 
 void CUASDlg::InitFlowQuery()

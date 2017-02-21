@@ -20,9 +20,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedQuery();
 	CComboBox m_subNoteAddress;
-//	afx_msg void OnBnClickedDeviceinfquery2();
-//	afx_msg void OnBnClickedDeviceinfquery2();
 	afx_msg void OnBnClickedDeviceinotequery();
+	afx_msg void OnBnClickedQuery();
 };
