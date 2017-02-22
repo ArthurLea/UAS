@@ -24,4 +24,5 @@ public:
 	CComboBox m_selAddress;
 	afx_msg void OnCbnSelchangeSeladress();
 	CEdit m_CatQueAddress;
+	CEdit m_FlowQueryInfo;
 };

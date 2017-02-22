@@ -78,4 +78,6 @@ public:
 	void SipBYE(char **dst,osip_message_t *srcmsg);
 	void SipCancel(char **dst,osip_message_t *srcmsg);
 	void CopyContact(char **dst,InfoServer m_InfoServer);
+
+	void ShowFlowQueryData(char *buffer);
 };

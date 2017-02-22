@@ -35,6 +35,7 @@ void CFlowQuery::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_SELADRESS, m_selAddress);
 	DDX_Control(pDX, IDC_EDT_ADDRESS, m_CatQueAddress);
+	DDX_Control(pDX, IDC_EDIT_FLOWQUERY, m_FlowQueryInfo);
 }
 
 
@@ -49,8 +50,6 @@ END_MESSAGE_MAP()
 
 void CFlowQuery::OnBnClickedFlowquery()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	// TODO: 在此添加控件通知处理程序代码
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	//release the Video information memory
@@ -71,9 +70,9 @@ void CFlowQuery::OnBnClickedFlowquery()
 	strTemp+="<Query>\r\n";
 	strTemp+="<Variable>BandWidth</Variable>\r\n";
 	strTemp+="<Privilege>"+UserCode+"</Privilege>\r\n";
-// 	strTemp+="<Address>"+Address+"</Address>\r\n";
-// 	strTemp+="<FromIndex>"+CString("1")+"</FromIndex>\r\n";
-// 	strTemp+="<ToIndex>"+CString("200")+"</ToIndex>\r\n";
+    // 	strTemp+="<Address>"+Address+"</Address>\r\n";
+    // 	strTemp+="<FromIndex>"+CString("1")+"</FromIndex>\r\n";
+    // 	strTemp+="<ToIndex>"+CString("200")+"</ToIndex>\r\n";
 	// 	strTemp+="<FileType>"+FileType+"</FileType>\r\n";
 	// 	strTemp+="<MaxFileNum>"+MaxFileNum+"</MaxFileNum>\r\n";
 	// 	strTemp+="<BeginTime>"+BeginTime+"</BeginTime>\r\n";
@@ -102,13 +101,12 @@ void CFlowQuery::OnBnClickedFlowquery()
 	//update log
 	ShowTestData="DO --------->\r\n";	
 	ShowTestTitle="Flow Query Test";
-	SCallId.nStatus=FlowQuery;
+	SCallId.nStatus = FlowQuery;
 }
 
 
 void CFlowQuery::OnCbnSelchangeSeladress()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	int index=m_selAddress.GetCurSel();
 	CString Address=NotifyInfo.Devices[index].Address;
 	GetDlgItem(IDC_EDT_ADDRESS)->SetWindowTextA(Address);

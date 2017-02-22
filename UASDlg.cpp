@@ -24,7 +24,7 @@ InfoNotify NotifyInfo;
 ofstream uas_msg_log;
 BOOL bNetSet;
 StatusCallID SCallId;
-StatusCallID SAlarmCallID;
+StatusCallID SAlarmCallID;//预警需要使用的Call_ID等字段信息，用于数据缓存
 StatusCallID sInviteCallID;
 CallID InviteKeepAliveID;
 char *ByeVia;
@@ -753,12 +753,14 @@ void CUASDlg::InitCoderSet()
 //初始化报警测试属性页
 void CUASDlg::InitAlarm()
 {
+	m_Alarm.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001199000001");
 	m_Alarm.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("%00%00%02");
 	m_Alarm.GetDlgItem(IDC_EDT_LEVEL)->SetWindowText("1");
-	m_Alarm.GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowText("VDetect");
-	m_Alarm.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
+	m_Alarm.m_AlarmTypeSel.SetCurSel(0);
+	m_Alarm.GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowText("1");
 	m_Alarm.GetDlgItem(IDC_EDT_IP)->SetWindowText("192.168.1.7");
 	m_Alarm.GetDlgItem(IDC_EDT_PORT)->SetWindowText("5060");
+
 }
 
 void CUASDlg::InitCatalogQuery()
@@ -803,7 +805,8 @@ void CUASDlg::InitEnableWindow()
 	m_Alarm.GetDlgItem(IDC_BTN_ALARM_SET)->EnableWindow(FALSE);
 	m_Alarm.GetDlgItem(IDC_BTN_TIMESET)->EnableWindow(FALSE);
 	m_CatalogQuery.GetDlgItem(IDC_QUERY)->EnableWindow(FALSE);
-	m_DeviceInfQuery.GetDlgItem(IDC_DEVICEINFQUERY)->EnableWindow(FALSE);
+	m_CatalogQuery.GetDlgItem(IDC_DEVICEINFQUERY2)->EnableWindow(FALSE);
+	m_DeviceInfQuery.GetDlgItem(IDC_DEVICEINFQUERY)->EnableWindow(FALSE); 
 	m_FlowQuery.GetDlgItem(IDC_FLOWQUERY)->EnableWindow(FALSE);
 	m_CoderSet.GetDlgItem(IDC_BTN_SET)->EnableWindow(FALSE);
 }
@@ -873,7 +876,7 @@ void CUASDlg::ShowRecvData(CString strRecvData)
 	string st = strRecvData.GetBuffer(strRecvData.GetLength());
 	int index = st.find("KeepAlive");
 	BOOL b = IsDlgButtonChecked(IDC_CHECK1);
-	if (index == string::npos || b)
+	if (index == string::npos || b)//index == string::npos 表示不是保活信息
 	{
 		//ShowSendData(data);
 		CTime   theTime = CTime::GetCurrentTime();

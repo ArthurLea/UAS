@@ -6,6 +6,8 @@
 #include "Alarm.h"
 #include "UASDlg.h"
 #include <time.h>
+#include <algorithm>
+#include "Common.h"
 extern InfoNotify NotifyInfo;
 extern BOOL bNetSet;
 extern StatusCallID SCallId;
@@ -71,12 +73,10 @@ BEGIN_MESSAGE_MAP(CAlarm, CDialog)
 	ON_CBN_SELCHANGE(IDC_SELalarmtype, &CAlarm::OnCbnSelchangeSelalarmtype)
 END_MESSAGE_MAP()
 
-
 // CAlarm message handlers
 
 void CAlarm::OnBnClickedBtnAlarmSet()
 {
-	// TODO: Add your control notification handler code here
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	//Create XML message
@@ -92,48 +92,62 @@ void CAlarm::OnBnClickedBtnAlarmSet()
 	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(Address);
 	GetDlgItem(IDC_EDT_IP)->GetWindowText(AcceptIP);
 	GetDlgItem(IDC_EDT_PORT)->GetWindowText(AcceptPort);
-	CString XmlAlarmSet;
-	XmlAlarmSet="<?xml version=\"1.0\"?>\r\n";
-	XmlAlarmSet+="<Action>\r\n";
-	//XmlAlarmSet+="<Notify>\r\n";
-	XmlAlarmSet+="<Variable>AlarmSubscribe</Variable>\r\n";
-	XmlAlarmSet+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlAlarmSet+="<Address>"+Address+"</Address>\r\n";
-	//XmlAlarmSet+="<Level>"+Level+"</Level>\r\n";
-	XmlAlarmSet+="<AlarmType>"+AlarmType+"</AlarmType>\r\n";	
-	//XmlAlarmSet+="<AcceptIp>"+AcceptIP+"</AcceptIp>\r\n";
-	//XmlAlarmSet+="<AcceptPort>"+AcceptPort+"</AcceptPort>\r\n";	
-	//XmlAlarmSet+="</Notify>\r\n";
-	XmlAlarmSet+="</Action>\r\n";
-	char *destXMLAlarmSet = (LPSTR)(LPCTSTR)XmlAlarmSet;
-	CSipMsgProcess *SipAlarm=new CSipMsgProcess;
-	char *SipXmlAlarm=new char[MAXBUFSIZE];
-	memset(SipXmlAlarm,0,MAXBUFSIZE);
-	SipAlarm->SipSubscribeMsg(&SipXmlAlarm,m_InfoServer,m_InfoClient,destXMLAlarmSet);
-	//send message to client
-	if (m_InfoClient.Port=="" || m_InfoClient.IP=="")
-	{		
-		delete SipXmlAlarm;
-		MessageBox("没有注册的客户端用户","UAS 提示",MB_OK|MB_ICONINFORMATION);		
+
+	//判断是否已经预定了此事件
+	string nowReservingEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
+	Common::nowReservingEventMsg = nowReservingEventMsg;//做一次缓存
+	vector<string>::iterator it = find(Common::curAlreadyReserveEvent.begin(),
+		Common::curAlreadyReserveEvent.end(), nowReservingEventMsg);
+	if (it != Common::curAlreadyReserveEvent.end())//存在这样的消息，表示已经预定此报警事件
+	{
+		AfxMessageBox("已经预定了此报警事件...", MB_OK | MB_ICONERROR);
 		return;
 	}
-	//pWnd->SendData(SipXmlAlarm);
-	UA_Msg uas_sendtemp;
-	strcpy(uas_sendtemp.data,SipXmlAlarm);
-	EnterCriticalSection(&g_uas);
-	uas_sendqueue.push(uas_sendtemp);
-	LeaveCriticalSection(&g_uas);
-	//pWnd->ShowSendData(SipXmlAlarm);
-	delete SipXmlAlarm;
-	//update log
-	ShowTestData="SUBSCRIBE  ----------->\r\n";
-	ShowTestTitle="Alarm Subscribe Test";
-	SAlarmCallID.nStatus=Alarm;
+	else//不存在，便是没有预定这样的报警事件
+	{
+		CString XmlAlarmSet;
+		XmlAlarmSet = "<?xml version=\"1.0\"?>\r\n";
+		XmlAlarmSet += "<Action>\r\n";
+		XmlAlarmSet += "<Notify>\r\n";
+		XmlAlarmSet += "<Variable>AlarmSubscribe</Variable>\r\n";
+		XmlAlarmSet += "<Privilege>" + UserCode + "</Privilege>\r\n";
+		XmlAlarmSet += "<Address>" + Address + "</Address>\r\n";
+		XmlAlarmSet += "<Level>" + Level + "</Level>\r\n";
+		XmlAlarmSet += "<AlarmType>" + AlarmType + "</AlarmType>\r\n";
+		XmlAlarmSet += "<AcceptIp>" + AcceptIP + "</AcceptIp>\r\n";
+		XmlAlarmSet += "<AcceptPort>" + AcceptPort + "</AcceptPort>\r\n";
+		XmlAlarmSet += "</Notify>\r\n";
+		XmlAlarmSet += "</Action>\r\n";
+		char *destXMLAlarmSet = (LPSTR)(LPCTSTR)XmlAlarmSet;
+		CSipMsgProcess *SipAlarm = new CSipMsgProcess;
+		char *SipXmlAlarm = new char[MAXBUFSIZE];
+		memset(SipXmlAlarm, 0, MAXBUFSIZE);
+		SipAlarm->SipSubscribeMsg(&SipXmlAlarm, m_InfoServer, m_InfoClient, destXMLAlarmSet);
+		//send message to client
+		if (m_InfoClient.Port == "" || m_InfoClient.IP == "")
+		{
+			delete SipXmlAlarm;
+			MessageBox("没有注册的客户端用户", "UAS 提示", MB_OK | MB_ICONINFORMATION);
+			return;
+		}
+		UA_Msg uas_sendtemp;
+		strcpy(uas_sendtemp.data, SipXmlAlarm);
+		EnterCriticalSection(&g_uas);
+		uas_sendqueue.push(uas_sendtemp);
+		LeaveCriticalSection(&g_uas);
+		delete SipXmlAlarm;
+		//update log
+		ShowTestData = "SUBSCRIBE  ----------->\r\n";
+		ShowTestTitle = "Alarm Subscribe Test";
+		SAlarmCallID.nStatus = Alarm;
+
+		GetDlgItem(IDC_BTN_ALARM_CANCEL)->EnableWindow(TRUE);//打开取消报警预定按钮
+
+	}
 }
 
 void CAlarm::OnBnClickedBtnTimeset()
 {
-	// TODO: Add your control notification handler code here
 	time_t CurrentTime;	
 	CurrentTime=time(NULL);
 	struct tm *pts;
@@ -178,7 +192,6 @@ void CAlarm::OnBnClickedBtnTimeset()
 
 void CAlarm::OnCbnSelchangeSeladress()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	int index=m_selAddress.GetCurSel();
 	CString Address=NotifyInfo.Devices[index].Address;
 	GetDlgItem(IDC_EDT_ADDRESS)->SetWindowTextA(Address);
@@ -187,7 +200,6 @@ void CAlarm::OnCbnSelchangeSeladress()
 
 void CAlarm::OnBnClickedBtnAlarmCancel()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	//Create XML message
@@ -203,49 +215,62 @@ void CAlarm::OnBnClickedBtnAlarmCancel()
 	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(Address);
 	GetDlgItem(IDC_EDT_IP)->GetWindowText(AcceptIP);
 	GetDlgItem(IDC_EDT_PORT)->GetWindowText(AcceptPort);
-	CString XmlAlarmSet;
-	XmlAlarmSet="<?xml version=\"1.0\"?>\r\n";
-	XmlAlarmSet+="<Action>\r\n";
-	//XmlAlarmSet+="<Notify>\r\n";
-	XmlAlarmSet+="<Variable>AlarmSubscribe</Variable>\r\n";
-	XmlAlarmSet+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlAlarmSet+="<Address>"+Address+"</Address>\r\n";
-	//XmlAlarmSet+="<Level>"+Level+"</Level>\r\n";
-	XmlAlarmSet+="<AlarmType>"+AlarmType+"</AlarmType>\r\n";	
-	//XmlAlarmSet+="<AcceptIp>"+AcceptIP+"</AcceptIp>\r\n";
-	//XmlAlarmSet+="<AcceptPort>"+AcceptPort+"</AcceptPort>\r\n";	
-	//XmlAlarmSet+="</Notify>\r\n";
-	XmlAlarmSet+="</Action>\r\n";
-	char *destXMLAlarmSet = (LPSTR)(LPCTSTR)XmlAlarmSet;
-	CSipMsgProcess *SipAlarm=new CSipMsgProcess;
-	char *SipXmlAlarm=new char[MAXBUFSIZE];
-	memset(SipXmlAlarm,0,MAXBUFSIZE);
-	SipAlarm->SipSubscribeMsgCancel(&SipXmlAlarm,m_InfoServer,m_InfoClient,destXMLAlarmSet);
-	//send message to client
-	if (m_InfoClient.Port=="" || m_InfoClient.IP=="")
-	{		
+	//判断是否已经预定了此事件
+	string nowReservingEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
+	Common::nowReservingEventMsg = nowReservingEventMsg;//做一次缓存
+	vector<string>::iterator it = find(Common::curAlreadyReserveEvent.begin(),
+		Common::curAlreadyReserveEvent.end(), nowReservingEventMsg);
+	if (it != Common::curAlreadyReserveEvent.end())//存在这样的消息，表示已经预定此报警事件
+	{
+		//删除这个预警事件Msg的缓存
+		Common::curAlreadyReserveEvent.erase(it);
+
+		CString XmlAlarmSet;
+		XmlAlarmSet="<?xml version=\"1.0\"?>\r\n";
+		XmlAlarmSet+="<Action>\r\n";
+		XmlAlarmSet+="<Notify>\r\n";
+		XmlAlarmSet+="<Variable>AlarmSubscribe</Variable>\r\n";
+		XmlAlarmSet+="<Privilege>"+UserCode+"</Privilege>\r\n";
+		XmlAlarmSet+="<Address>"+Address+"</Address>\r\n";
+		XmlAlarmSet+="<Level>"+Level+"</Level>\r\n";
+		XmlAlarmSet+="<AlarmType>"+AlarmType+"</AlarmType>\r\n";	
+		XmlAlarmSet+="<AcceptIp>"+AcceptIP+"</AcceptIp>\r\n";
+		XmlAlarmSet+="<AcceptPort>"+AcceptPort+"</AcceptPort>\r\n";	
+		XmlAlarmSet+="</Notify>\r\n";
+		XmlAlarmSet+="</Action>\r\n";
+		char *destXMLAlarmSet = (LPSTR)(LPCTSTR)XmlAlarmSet;
+		CSipMsgProcess *SipAlarm=new CSipMsgProcess;
+		char *SipXmlAlarm=new char[MAXBUFSIZE];
+		memset(SipXmlAlarm,0,MAXBUFSIZE);
+		SipAlarm->SipSubscribeMsgCancel(&SipXmlAlarm,m_InfoServer,m_InfoClient,destXMLAlarmSet);
+		//send message to client
+		if (m_InfoClient.Port=="" || m_InfoClient.IP=="")
+		{		
+			delete SipXmlAlarm;
+			MessageBox("没有注册的客户端用户","UAS 提示",MB_OK|MB_ICONINFORMATION);		
+			return;
+		}
+		UA_Msg uas_sendtemp;
+		strcpy(uas_sendtemp.data,SipXmlAlarm);
+		EnterCriticalSection(&g_uas);
+		uas_sendqueue.push(uas_sendtemp);
+		LeaveCriticalSection(&g_uas);
 		delete SipXmlAlarm;
-		MessageBox("没有注册的客户端用户","UAS 提示",MB_OK|MB_ICONINFORMATION);		
+		//update log
+		ShowTestData="SUBSCRIBE CANCEL  ----------->\r\n";
+		ShowTestTitle="Alarm Subscribe Cancel Test";
+		SAlarmCallID.nStatus = Alarm;
+	}
+	else
+	{
+		AfxMessageBox("您还没有预定此报警事件...", MB_OK | MB_ICONERROR);
 		return;
 	}
-	//pWnd->SendData(SipXmlAlarm);
-	UA_Msg uas_sendtemp;
-	strcpy(uas_sendtemp.data,SipXmlAlarm);
-	EnterCriticalSection(&g_uas);
-	uas_sendqueue.push(uas_sendtemp);
-	LeaveCriticalSection(&g_uas);
-	//pWnd->ShowSendData(SipXmlAlarm);
-	delete SipXmlAlarm;
-	//update log
-	ShowTestData="SUBSCRIBE CANCEL  ----------->\r\n";
-	ShowTestTitle="Alarm Subscribe Cancel Test";
-	SAlarmCallID.nStatus=Alarm;
 }
 
 
 void CAlarm::OnCbnSelchangeSelalarmtype()
 {
-	// TODO: 在此添加控件通知处理程序代码	
 	int index=m_AlarmTypeSel.GetCurSel();
 	CString AlarmType=arrAlarmType[index];
 	GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowTextA(AlarmType);
@@ -256,22 +281,23 @@ BOOL CAlarm::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
+	arrAlarmType.push_back("1");
+	m_AlarmTypeSel.InsertString(0,"高温报警");
 
-	arrAlarmType.push_back("VLost");
-	m_AlarmTypeSel.InsertString(0,"VLost");
-	arrAlarmType.push_back("VDetect");
-	m_AlarmTypeSel.InsertString(1,"VDetect");
-	arrAlarmType.push_back("EventOnVideo");
-	m_AlarmTypeSel.InsertString(2,"EventOnVideo");
-	arrAlarmType.push_back("VHide");
-	m_AlarmTypeSel.InsertString(3,"VHide");
-	arrAlarmType.push_back("OTH");
-	m_AlarmTypeSel.InsertString(4,"OTH");
-	arrAlarmType.push_back("Detect");
-	m_AlarmTypeSel.InsertString(5,"Detect");
-	m_AlarmTypeSel.SetCurSel(0);
-	GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowTextA("VLost");
+	arrAlarmType.push_back("2");
+	m_AlarmTypeSel.InsertString(1,"低温报警");
+
+	arrAlarmType.push_back("3");
+	m_AlarmTypeSel.InsertString(2,"视频丢失报警");
+
+	arrAlarmType.push_back("4");
+	m_AlarmTypeSel.InsertString(3,"移动侦测报警");
+
+	arrAlarmType.push_back("5");
+	m_AlarmTypeSel.InsertString(4,"遮挡侦测报警");
+
+	arrAlarmType.push_back("6");
+	m_AlarmTypeSel.InsertString(5,"输入开关量报警");
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE

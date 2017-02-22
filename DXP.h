@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include <queue>
 #include <vector>
-
 using namespace std;
 #define MAXBUFSIZE 4000
 #define  XMLSIZE 3000
@@ -61,7 +60,7 @@ struct InfoClient
 //校验CallID及状态机
 struct StatusCallID
 {
-	int nStatus;
+	int  nStatus;
 	char CurID[NUMSIZE];
 	char CurHost[IPSIZE];
 	char CurTag[NUMSIZE];
