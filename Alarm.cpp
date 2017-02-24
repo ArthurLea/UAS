@@ -24,7 +24,6 @@ extern BOOL bNodeParent;
 extern char strBye[MAXBUFSIZE];
 //判断是否是心跳信息
 extern char *contact;
-extern BOOL bSipRegister;
 extern BOOL bNodeType;
 extern int nOverTime;
 extern int nCurrentTime;
@@ -67,7 +66,6 @@ void CAlarm::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAlarm, CDialog)
 	ON_BN_CLICKED(IDC_BTN_ALARM_SET, &CAlarm::OnBnClickedBtnAlarmSet)
-	ON_BN_CLICKED(IDC_BTN_TIMESET, &CAlarm::OnBnClickedBtnTimeset)
 	ON_CBN_SELCHANGE(IDC_SELADRESS, &CAlarm::OnCbnSelchangeSeladress)
 	ON_BN_CLICKED(IDC_BTN_ALARM_CANCEL, &CAlarm::OnBnClickedBtnAlarmCancel)
 	ON_CBN_SELCHANGE(IDC_SELalarmtype, &CAlarm::OnCbnSelchangeSelalarmtype)
@@ -94,10 +92,10 @@ void CAlarm::OnBnClickedBtnAlarmSet()
 	GetDlgItem(IDC_EDT_PORT)->GetWindowText(AcceptPort);
 
 	//判断是否已经预定了此事件
-	string nowReservingEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
-	Common::nowReservingEventMsg = nowReservingEventMsg;//做一次缓存
+	string nowOperatorEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
+	Common::nowOperatorEventMsg = nowOperatorEventMsg;//做一次缓存
 	vector<string>::iterator it = find(Common::curAlreadyReserveEvent.begin(),
-		Common::curAlreadyReserveEvent.end(), nowReservingEventMsg);
+		Common::curAlreadyReserveEvent.end(), nowOperatorEventMsg);
 	if (it != Common::curAlreadyReserveEvent.end())//存在这样的消息，表示已经预定此报警事件
 	{
 		AfxMessageBox("已经预定了此报警事件...", MB_OK | MB_ICONERROR);
@@ -141,54 +139,11 @@ void CAlarm::OnBnClickedBtnAlarmSet()
 		ShowTestTitle = "Alarm Subscribe Test";
 		SAlarmCallID.nStatus = Alarm;
 
-		GetDlgItem(IDC_BTN_ALARM_CANCEL)->EnableWindow(TRUE);//打开取消报警预定按钮
-
+		//预定成功后在进行存储，在SipParse中的Alarm中进行存储
+		//Common::curAlreadyReserveEvent.push_back(nowReservingEventMsg);
+		//GetDlgItem(IDC_BTN_ALARM_CANCEL)->EnableWindow(TRUE);//打开取消报警预定按钮
 	}
 }
-
-void CAlarm::OnBnClickedBtnTimeset()
-{
-	time_t CurrentTime;	
-	CurrentTime=time(NULL);
-	struct tm *pts;
-	pts=localtime(&CurrentTime);
-	CString strTime;
-	strTime.Format("%d-%d-%dT%d:%d:%dZ",pts->tm_year+1900,pts->tm_mon+1,pts->tm_mday,pts->tm_hour,pts->tm_min,pts->tm_sec);
-	CString XmlTimeSet;
-	XmlTimeSet="<?xml version=\"1.0\"?>\r\n";
-	XmlTimeSet+="<Action>\r\n";
-	XmlTimeSet+="<Notify>\r\n";
-	XmlTimeSet+="<Variable>TimeSet</Variable>\r\n";	
-	XmlTimeSet+="<Time>"+strTime+"</Time>\r\n";
-	XmlTimeSet+="<Privilege>192016809088</Privilege>\r\n";
-	XmlTimeSet+="</Notify>\r\n";
-	XmlTimeSet+="</Action>\r\n";	
-	char *destXML = (LPSTR)(LPCTSTR)XmlTimeSet;		
-	CSipMsgProcess *Sip=new CSipMsgProcess;	
-	char *SipXml=new char[MAXBUFSIZE];
-	memset(SipXml,0,MAXBUFSIZE);
-	Sip->SipXmlMsg(&SipXml,m_InfoServer,m_InfoClient,destXML);
-	//send message to client
-	if (m_InfoClient.Port=="" || m_InfoClient.IP=="")
-	{		
-		delete SipXml;
-		MessageBox("没有注册的客户端用户","UAS 提示",MB_OK|MB_ICONINFORMATION);		
-		return;
-	}	
-	//pWnd->SendData(SipXmlAlarm);
-	UA_Msg uas_sendtemp;
-	strcpy(uas_sendtemp.data,SipXml);	
-	EnterCriticalSection(&g_uas);
-	uas_sendqueue.push(uas_sendtemp);		
-	LeaveCriticalSection(&g_uas);
-	//pWnd->ShowSendData(SipXmlAlarm);	
-	delete SipXml;
-	//update log	
-	ShowTestData="DO  ----------->\r\n";	
-	ShowTestTitle="Time Set Test";
-	SCallId.nStatus=TimeSet;
-}
-
 
 void CAlarm::OnCbnSelchangeSeladress()
 {
@@ -196,7 +151,6 @@ void CAlarm::OnCbnSelchangeSeladress()
 	CString Address=NotifyInfo.Devices[index].Address;
 	GetDlgItem(IDC_EDT_ADDRESS)->SetWindowTextA(Address);
 }
-
 
 void CAlarm::OnBnClickedBtnAlarmCancel()
 {
@@ -216,14 +170,15 @@ void CAlarm::OnBnClickedBtnAlarmCancel()
 	GetDlgItem(IDC_EDT_IP)->GetWindowText(AcceptIP);
 	GetDlgItem(IDC_EDT_PORT)->GetWindowText(AcceptPort);
 	//判断是否已经预定了此事件
-	string nowReservingEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
-	Common::nowReservingEventMsg = nowReservingEventMsg;//做一次缓存
+	string nowOperatorEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
+	Common::nowOperatorEventMsg = nowOperatorEventMsg;//做一次缓存
 	vector<string>::iterator it = find(Common::curAlreadyReserveEvent.begin(),
-		Common::curAlreadyReserveEvent.end(), nowReservingEventMsg);
-	if (it != Common::curAlreadyReserveEvent.end())//存在这样的消息，表示已经预定此报警事件
+		Common::curAlreadyReserveEvent.end(), nowOperatorEventMsg);
+	if (it != Common::curAlreadyReserveEvent.end())//表示预定了此报警事件
 	{
+		//需要在成功取消后再删除
 		//删除这个预警事件Msg的缓存
-		Common::curAlreadyReserveEvent.erase(it);
+		//Common::curAlreadyReserveEvent.erase(it);
 
 		CString XmlAlarmSet;
 		XmlAlarmSet="<?xml version=\"1.0\"?>\r\n";
@@ -260,6 +215,8 @@ void CAlarm::OnBnClickedBtnAlarmCancel()
 		ShowTestData="SUBSCRIBE CANCEL  ----------->\r\n";
 		ShowTestTitle="Alarm Subscribe Cancel Test";
 		SAlarmCallID.nStatus = Alarm;
+
+		Common::FLAG_NowCancleReserving = true;
 	}
 	else
 	{
@@ -268,14 +225,12 @@ void CAlarm::OnBnClickedBtnAlarmCancel()
 	}
 }
 
-
 void CAlarm::OnCbnSelchangeSelalarmtype()
 {
 	int index=m_AlarmTypeSel.GetCurSel();
 	CString AlarmType=arrAlarmType[index];
 	GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowTextA(AlarmType);
 }
-
 
 BOOL CAlarm::OnInitDialog()
 {

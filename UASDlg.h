@@ -2,23 +2,25 @@
 //
 
 #pragma once
-#include "NetSet.h"
-#include "Invite.h"
-#include "PTZ.h"
-#include "CoderSet.h"
-#include "VideoQuery.h"
-#include "VideoPlay.h"
-#include "Alarm.h"
 #include "afxwin.h"
 #include "afxcmn.h"
 #include "DXP.h"
-#include "SetTestMember.h"
 #include "ShowLog.h"
 #include "SipMsgProcess.h"
 #include "MySocket.h"
+#include "NetSet.h"
+#include "Invite.h"
+#include "PTZ.h"
+#include "VideoQuery.h"
+#include "VideoPlay.h"
+#include "Alarm.h"
+#include "SetTestMember.h"
 #include "CatalogQuery.h"
 #include "DeviceInfQuery.h"
 #include "FlowQuery.h"
+#include "CoderSet.h"
+#include "PSTVSetTime.h"
+#include "CaptureImage.h"
 //自定义消息
 #define WM_RECVDATA    (WM_USER+100)
 #define  WM_SENDDATA   (WM_USER+101)
@@ -80,11 +82,13 @@ public:
 	CPTZ m_PTZ;
 	CVideoQuery m_VideoQuery;
 	CVideoPlay m_VideoPlay;
-	CCoderSet m_CoderSet;
 	CAlarm m_Alarm;
 	CCatalogQuery m_CatalogQuery;
 	CDeviceInfQuery m_DeviceInfQuery;
 	CFlowQuery m_FlowQuery;
+	CCoderSet m_CoderSet;
+	CPSTVSetTime m_PSTVSetTime;
+	CCaptureImage m_CaptureImg;
 	afx_msg void OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedBtnOpenSip();
 	afx_msg void OnBnClickedBtnSendClear();
@@ -101,7 +105,6 @@ public:
 	int nCurCesq;
 
 public:
-		
 		vector<InfoVideo> m_VideoInfo;
 		///////////TCP communication	
 		LRESULT OnReceive(WPARAM wparam=NULL, LPARAM lparam=NULL);

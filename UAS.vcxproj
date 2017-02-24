@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Alarm.cpp" />
+    <ClCompile Include="CaptureImage.cpp" />
     <ClCompile Include="CatalogQuery.cpp" />
     <ClCompile Include="CoderSet.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="MySocket.cpp" />
     <ClCompile Include="NetSet.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PSTVSetTime.cpp" />
     <ClCompile Include="PTZ.cpp" />
     <ClCompile Include="SetTestMember.cpp" />
     <ClCompile Include="ShowLog.cpp" />
@@ -160,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Alarm.h" />
+    <ClInclude Include="CaptureImage.h" />
     <ClInclude Include="CatalogQuery.h" />
     <ClInclude Include="CoderSet.h" />
     <ClInclude Include="Common.h" />
@@ -172,6 +175,7 @@
     <ClInclude Include="MySocket.h" />
     <ClInclude Include="NetSet.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PSTVSetTime.h" />
     <ClInclude Include="PTZ.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SetTestMember.h" />

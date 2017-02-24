@@ -89,7 +89,7 @@ void CCoderSet::OnBnClickedBtnSet()
 	GetDlgItem(IDC_EDT_GOP)->GetWindowText(GOP);
 	GetDlgItem(IDC_EDIT_IMAGEQUALITY)->GetWindowText(ImageQuality);
 	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(address);
-	pWnd->encodeAddress=address;
+	pWnd->encodeAddress = address;
 	CString XmlCoderSet;
 	XmlCoderSet="<?xml version=\"1.0\"?>\r\n";
 	XmlCoderSet+="<Action>\r\n";

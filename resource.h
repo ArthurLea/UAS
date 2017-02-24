@@ -23,6 +23,8 @@
 #define IDD_DLG_DEVICEINFQUERY          142
 #define IDD_DLG_FLOWQUERY               143
 #define IDD_EQUAL                       144
+#define IDD_DIG_PSTVTTIME               152
+#define IDD_DLG_CAPIMG                  156
 #define IDC_COMBO1                      1000
 #define IDC_BTN_SET                     1001
 #define IDC_BTN_OPEN_SIP                1002
@@ -131,7 +133,9 @@
 #define IDC_PASSWORDS                   1100
 #define IDC_EDIT_DEVICEINFO             1100
 #define IDC_EDIT_NOTEINFO               1100
+#define IDC_EDIT_PRIVILEGE              1100
 #define IDC_SUBNOTE                     1101
+#define IDC_EDIT_CAPTYPE                1101
 #define IDC_SELADRESS                   1102
 #define IDC_CHECK1                      1103
 #define IDC_PTZUP                       1104
@@ -140,27 +144,37 @@
 #define IDC_PTZLEFT                     1105
 #define IDC_BUTTON1                     1105
 #define IDC_BUTTON_REBOOT               1105
+#define IDC_BUTTON_NTPTIME              1105
+#define IDC_BUTTON_DOCAPTURE            1105
 #define IDC_PZTDOWN                     1106
 #define IDC_COMBO2                      1106
 #define IDC_COMBO_IP                    1106
+#define IDC_BUTTON_CurTIME              1106
+#define IDC_COMBO_PRIVILEGE             1106
 #define IDC_PTZRIGHT                    1107
 #define IDC_EDIT1                       1107
 #define IDC_EDIT_IMAGEQUALITY           1107
+#define IDC_EDIT_TIME                   1107
+#define IDC_EDIT_CAMADD                 1107
 #define IDC_PTZUP2                      1108
 #define IDC_EDIT_FLOWQUERY              1108
 #define IDC_PTZUP3                      1109
+#define IDC_BUTTON_SETTIME              1109
 #define IDC_PTZUP4                      1110
 #define IDC_PTZUP5                      1111
 #define IDC_PTZUP6                      1112
+#define IDC_COMBO_CAPTYPE               1112
 #define IDC_PTZUP7                      1113
+#define IDC_EDIT3                       1113
+#define IDC_EDIT_URL                    1113
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        152
+#define _APS_NEXT_RESOURCE_VALUE        159
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1109
+#define _APS_NEXT_CONTROL_VALUE         1114
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -51,12 +51,11 @@ public:
 	void Sip401(char **dst,osip_message_t *srcmsg);	
 	//void Sip600(char **dst,osip_message_t *srcmsg);
 	//alarm
-	int SipRegisterCreate(char **strRegister,InfoServer m_InfoServer,InfoClient m_InfoClient);
-	int SipRegisterWithAuthCreate(char **strRegister,InfoServer m_InfoServer,InfoClient m_InfoClient);
 	void SipSubscribeMsg(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,char *Xml);
 	void SipSubscribeMsgCancel(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,char *Xml);
 	// sip do method
-	void SipXmlMsg(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,char *Xml);
+	void SipTimeSetXmlMsg(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,char *Xml);
+	void CSipMsgProcess::SipCaptureImageMsg(char **dst, InfoServer m_InfoServer, InfoClient m_InfoClient, char *Xml);
 	void SipCancelMsg(char **dstCancel,InfoServer m_InfoServer,InfoClient m_InfoClient,CString address);
 	void PreSetBitSipXmlMsg(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,CString address,char *Xml);
 	void CatalogQuerySipXmlMsg(char **dst,InfoServer m_InfoServer,CString address,InfoClient m_InfoClient,char *Xml);

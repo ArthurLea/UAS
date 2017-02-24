@@ -16,7 +16,12 @@ struct RECVPARAM
 	HWND hwnd;
 };
 //事件类型
-enum{Register,NodeType,Invite,PTZ,PreBitSet,HistoryQuery,CatalogQuery,DeviceInfQuery,FlowQuery,HistoryPlay,EncoderSet,Alarm,TimeSet,TimeGet};
+enum{Register,NodeType,Invite
+	,PTZ,PreBitSet,HistoryQuery
+	,CatalogQuery,DeviceInfQuery,
+	FlowQuery,HistoryPlay,EncoderSet,
+	Alarm,TimeSet,TimeGet,CaptureImage
+};
 //服务端的信息
 struct InfoServer
 {

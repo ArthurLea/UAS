@@ -197,7 +197,6 @@ void CPTZ::OnBnClickedBtnPre()
 
 void CPTZ::OnCbnSelchangeSeladress()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	int index=m_selAddress.GetCurSel();
 	CString Address=NotifyInfo.Devices[index].Address;
 	GetDlgItem(IDC_EDT_ADD)->SetWindowTextA(Address);
