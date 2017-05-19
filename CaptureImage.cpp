@@ -30,6 +30,9 @@ CCaptureImage::~CCaptureImage()
 {
 }
 
+const int CCaptureImage::HTTP_FLAG = 1;
+const int CCaptureImage::FTP_FLAG = 2;
+
 void CCaptureImage::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
@@ -58,7 +61,8 @@ BOOL CCaptureImage::OnInitDialog()
 	capTureTypeContent.push_back("IPC直接抓图");
 	m_CapTureType.SetCurSel(0);
 	GetDlgItem(IDC_EDIT_CAPTYPE)->SetWindowTextA(capTureTypeContent[0]);
-
+	/*广东版本*/
+	/*
 	m_Privilege.InsertString(0, "090");//中心管理员
 	m_Privilege.InsertString(1, "091");//中心监控员
 	m_Privilege.InsertString(2, "092");//普通监控员（由090,092权限分配）
@@ -77,7 +81,21 @@ BOOL CCaptureImage::OnInitDialog()
 	privilegeContent.push_back("基层站管理员");
 	privilegeContent.push_back("普通监控员");
 	privilegeContent.push_back("预留");
-	m_Privilege.SetCurSel(0);
+	*/
+	m_Privilege.InsertString(0, "10");//系统管理员
+	m_Privilege.InsertString(1, "20");//子系统用户
+	m_Privilege.InsertString(2, "30");//高级用户
+	m_Privilege.InsertString(3, "40");//普通用户
+	m_Privilege.InsertString(4, "50");//浏览用户
+
+
+	privilegeContent.push_back("系统管理员");
+	privilegeContent.push_back("子系统用户");
+	privilegeContent.push_back("高级用户");
+	privilegeContent.push_back("普通用户");
+	privilegeContent.push_back("浏览用户");
+
+	m_Privilege.SetCurSel(1);
 	GetDlgItem(IDC_EDIT_PRIVILEGE)->SetWindowTextA(privilegeContent[0]);
 
 	return 0;

@@ -684,7 +684,7 @@ int CUASDlg::GetLocalIp(const CString &sHostName, CString &sIpAddress)
 		if (sIpAddress.IsEmpty())
 			MessageBox("本地计算机IP地址获取失败", "UAS 出错", MB_OK | MB_ICONERROR);
 	}
-
+	m_ComboxLocalIP.SetCurSel(0);
 
 	return 0;
 }
@@ -747,7 +747,7 @@ void CUASDlg::InitInvite()
 	CString ipStr = m_InfoServer.IP;
 	ipStr += " UDP 1236";
 	//实时流属性页初始化
-	m_Invite.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("%01");
+	m_Invite.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("20");//用户权限码
 	m_Invite.GetDlgItem(IDC_EDT_FORMAT)->SetWindowText("4CIF");
 	m_Invite.GetDlgItem(IDC_EDT_VIDEO)->SetWindowText("H.264");
 	m_Invite.GetDlgItem(IDC_EDT_AUDIO)->SetWindowText("G.722");
@@ -761,7 +761,7 @@ void CUASDlg::InitInvite()
 //初始化云台控制属性页
 void CUASDlg::InitPTZ()
 {
-	m_PTZ.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("%02");
+	m_PTZ.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("20");
 	m_PTZ.GetDlgItem(IDC_EDT_PTZ)->SetWindowText("0x0402");
 	m_PTZ.GetDlgItem(IDC_EDT_ADD)->SetWindowText("地址编码");
 	m_PTZ.GetDlgItem(IDC_EDT_PTL)->SetWindowText("null");
@@ -772,12 +772,12 @@ void CUASDlg::InitPTZ()
 //初始化视频查询属性页
 void CUASDlg::InitHistoryVideoQuery()
 {
-	m_VideoQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("%00%01");
+	m_VideoQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
 	m_VideoQuery.GetDlgItem(IDC_EDT_FILETYPE)->SetWindowText("1");
-	m_VideoQuery.GetDlgItem(IDC_EDT_BEGINTIME)->SetWindowText("20140901T000000Z");
-	m_VideoQuery.GetDlgItem(IDC_EDT_ENDTIME)->SetWindowText("20140901T130000Z");
-	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM)->SetWindowText("1");
-	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM2)->SetWindowText("10");
+	m_VideoQuery.GetDlgItem(IDC_EDT_BEGINTIME)->SetWindowText("2010-03-16T13:50:50Z");
+	m_VideoQuery.GetDlgItem(IDC_EDT_ENDTIME)->SetWindowText("2010-03-16T14:50:50Z");
+	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM)->SetWindowText("0");
+	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM2)->SetWindowText("3");
 	m_VideoQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
 }
 
@@ -800,14 +800,14 @@ void CUASDlg::InitCoderSet()
 	m_CoderSet.GetDlgItem(IDC_EDT_PRIORITY)->SetWindowText("0");
 	m_CoderSet.GetDlgItem(IDC_EDT_GOP)->SetWindowText("8");
 	m_CoderSet.GetDlgItem(IDC_EDIT_IMAGEQUALITY)->SetWindowText("高");
-	m_CoderSet.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001199000001");
+	m_CoderSet.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");
 }
 
 //初始化报警测试属性页
 void CUASDlg::InitAlarm()
 {
-	m_Alarm.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001199000001");
-	m_Alarm.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("%00%00%02");
+	m_Alarm.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");
+	m_Alarm.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("20");
 	m_Alarm.GetDlgItem(IDC_EDT_LEVEL)->SetWindowText("1");
 	m_Alarm.m_AlarmTypeSel.SetCurSel(0);
 	m_Alarm.GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowText("1");
@@ -818,21 +818,21 @@ void CUASDlg::InitAlarm()
 
 void CUASDlg::InitCatalogQuery()
 {
-	m_CatalogQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("%00%00%02");
-	m_CatalogQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001199000001");//UAC 地址编码 252000001199000001
+	m_CatalogQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
+	m_CatalogQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");//UAC 地址编码 252000001199000001
 }
 
 void CUASDlg::InitDeviceInfQuery()
 {
-	m_DeviceInfQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("%12%01");
+	m_DeviceInfQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
 	m_DeviceInfQuery.GetDlgItem(IDC_SELADRESS)->SetWindowText("Catalog");
 	m_DeviceInfQuery.m_selAddress.SetCurSel(0);
-	m_DeviceInfQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("252000001101001001");
+	m_DeviceInfQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");
 }
 
 void CUASDlg::InitFlowQuery()
 {
-	m_FlowQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("%00%00%02");
+	m_FlowQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
 	m_FlowQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
 }
 
@@ -846,8 +846,9 @@ void CUASDlg::InitEnableWindow()
 	m_NetSet.GetDlgItem(IDC_EDT_ADDRESS)->EnableWindow(FALSE);
 	m_NetSet.GetDlgItem(IDC_EDT_NAME)->EnableWindow(FALSE);
 	m_Invite.GetDlgItem(IDC_BTN_TEST)->EnableWindow(FALSE);
+	m_Invite.GetDlgItem(IDC_BTN_CANCEL)->EnableWindow(FALSE); 
+	m_Invite.GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
 	m_Invite.GetDlgItem(IDC_BTN_BYE)->EnableWindow(FALSE);
-	m_Invite.GetDlgItem(IDC_BTN_CANCEL)->EnableWindow(FALSE);
 	m_PTZ.GetDlgItem(IDC_BTN_TEST)->EnableWindow(FALSE);
 	m_PTZ.GetDlgItem(IDC_BTN_PRE)->EnableWindow(FALSE);
 	m_VideoQuery.GetDlgItem(IDC_BTN_QUERY)->EnableWindow(TRUE); //YWD
@@ -1127,7 +1128,6 @@ void CUASDlg::SendData(char* data)
 		{
 			ShowSendData(data);
 		}
-
 	}
 }
 

@@ -31,4 +31,6 @@ public:
 	afx_msg void OnBnClickedButtonDocapture();
 	afx_msg void OnCbnSelchangeComboPrivilege();
 	afx_msg void OnCbnSelchangeComboCaptype();
+	const static int HTTP_FLAG;
+	const static int FTP_FLAG;
 };

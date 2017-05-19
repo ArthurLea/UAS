@@ -84,9 +84,16 @@ void CVideoQuery::OnBnClickedBtnQuery()
 	strTemp+="<Privilege>"+UserCode+"</Privilege>\r\n";
 	//strTemp+="<CameraAddress>"+CameraAddress+"</CameraAddress>\r\n";
 	strTemp+="<FileType>"+FileType+"</FileType>\r\n";
+
+	/*
 	strTemp+="<FromIndex>"+beginNum+"</FromIndex>\r\n";
 	strTemp+="<ToIndex>"+endNum+"</ToIndex>\r\n";
 	//strTemp+="<MaxFileNum>"+MaxFileNum+"</MaxFileNum>\r\n";
+	*/
+	//endNum= itoa(atoi(endNum) - atoi(beginNum));
+
+	endNum.Format("%d", atoi(endNum) - atoi(beginNum));
+	strTemp += "<MaxFileNum>" + endNum + "</MaxFileNum>\r\n";
 	strTemp+="<BeginTime>"+BeginTime+"</BeginTime>\r\n";
 	strTemp+="<EndTime>"+EndTime+"</EndTime>\r\n";	
 	strTemp+="</Query>\r\n";

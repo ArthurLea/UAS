@@ -58,7 +58,6 @@
 #define IDC_EDT_MULTICAST               1029
 #define IDC_EDT_PROTOCOL                1030
 #define IDC_EDT_SOCKET                  1031
-#define IDC_EDT_TRANSMODE2              1032
 #define IDC_BTN_TEST                    1033
 #define IDC_BTN_PRE                     1034
 #define IDC_EDT_PTZ                     1035
@@ -165,16 +164,16 @@
 #define IDC_PTZUP6                      1112
 #define IDC_COMBO_CAPTYPE               1112
 #define IDC_PTZUP7                      1113
-#define IDC_EDIT3                       1113
 #define IDC_EDIT_URL                    1113
+#define IDC_BTN_GETREALSTREAM           1114
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        159
+#define _APS_NEXT_RESOURCE_VALUE        160
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1114
+#define _APS_NEXT_CONTROL_VALUE         1115
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

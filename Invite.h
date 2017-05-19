@@ -20,7 +20,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedBtnTest();
 	afx_msg void OnBnClickedBtnBye();
 	afx_msg void OnBnClickedBtnPlay();
 	afx_msg void OnBnClickedBtnCancel();
@@ -28,4 +27,5 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnCbnSelchangeSeladress();
 	int m_selName;
+	afx_msg void OnBnClickedBtnTest();
 };

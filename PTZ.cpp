@@ -149,11 +149,13 @@ void CPTZ::OnBnClickedBtnPre()
 	CString UserCode;
 	CString Address;
 	GetDlgItem(IDC_EDT_BEGINNUM)->GetWindowText(beginNum);
-	GetDlgItem(IDC_EDT_ENDNUM)->GetWindowText(endNum);
+	//GetDlgItem(IDC_EDT_ENDNUM)->GetWindowText(endNum);
 	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	GetDlgItem(IDC_EDT_ADD)->GetWindowText(Address);
-	tPTZQuery.ptzQueryNumbegin=beginNum;
-	tPTZQuery.ptzQueryNumend=endNum;
+	//tPTZQuery.ptzQueryNumbegin=beginNum;
+	//tPTZQuery.ptzQueryNumend=endNum;
+
+	tPTZQuery.ptzQueryReceivePresetNum = beginNum;
 	tPTZQuery.UserCode=UserCode;
 	tPTZQuery.Address=Address;
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
@@ -164,8 +166,9 @@ void CPTZ::OnBnClickedBtnPre()
 	XmlPreBitQuery+="<Query>\r\n";	
 	XmlPreBitQuery+="<Variable>PresetList</Variable>\r\n";
 	XmlPreBitQuery+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPreBitQuery+="<FromIndex>"+beginNum+"</FromIndex>\r\n";
-	XmlPreBitQuery+="<ToIndex>"+endNum+"</ToIndex>\r\n";
+	//XmlPreBitQuery+="<FromIndex>"+beginNum+"</FromIndex>\r\n";
+	//XmlPreBitQuery+="<ToIndex>"+endNum+"</ToIndex>\r\n";
+	XmlPreBitQuery+="<ReceivePresetNum>"+ beginNum+"</ReceivePresetNum>\r\n";
 	XmlPreBitQuery+="</Query>\r\n";
 	XmlPreBitQuery+="</Action>\r\n";
 	char *destXML= (LPSTR)(LPCTSTR)XmlPreBitQuery;		
@@ -212,13 +215,13 @@ void CPTZ::OnBnClickedPtzup()
 	if(bAlter)
 	{
 		GetDlgItem(IDC_PTZUP)->SetWindowText(_T("Í£"));
-		PTZCommand="0x0402";
+		PTZCommand="0x0401";
 		bAlter=FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP)->SetWindowText(_T("ÉÏ"));
-		PTZCommand="0x0401";
+		PTZCommand="0x0402";
 		bAlter=TRUE;
 	}
 	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
@@ -269,13 +272,13 @@ void CPTZ::OnBnClickedPtzleft()
 	if(bAlter)
 	{
 		GetDlgItem(IDC_PTZLEFT)->SetWindowText(_T("Í£"));
-		PTZCommand="0x0504";
+		PTZCommand="0x0503";
 		bAlter=FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZLEFT)->SetWindowText(_T("×ó"));
-		PTZCommand="0x0503";
+		PTZCommand="0x0504";
 		bAlter=TRUE;
 	}
 	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
@@ -326,13 +329,13 @@ void CPTZ::OnBnClickedPtzright()
 	if(bAlter)
 	{
 		GetDlgItem(IDC_PTZRIGHT)->SetWindowText(_T("Í£"));
-		PTZCommand="0x0502";
+		PTZCommand="0x0501";
 		bAlter=FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZRIGHT)->SetWindowText(_T("ÓÒ"));
-		PTZCommand="0x0501";
+		PTZCommand="0x0502";
 		bAlter=TRUE;
 	}
 	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
@@ -440,13 +443,13 @@ void CPTZ::OnBnClickedPtzup2()
 	if(bAlter)
 	{
 		GetDlgItem(IDC_PTZUP2)->SetWindowText(_T("Í£"));
-		PTZCommand="0x0102";
+		PTZCommand="0x0101";
 		bAlter=FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP2)->SetWindowText(_T("¼õÐ¡¹âÈ¦"));
-		PTZCommand="0x0101";
+		PTZCommand="0x0102";
 		bAlter=TRUE;
 	}
 	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);

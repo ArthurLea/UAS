@@ -40,6 +40,7 @@ public:
 	int beginIndex;
 	int endIndex;
 	int RealNum;
+	int RemainNum;
 public:
 	int SipParser(char *buffer,int Msglength);
 	BOOL SipVerify(InfoServer m_InfoServer,InfoClient m_InfoClient,osip_message_t *srcMsg,int nto);
@@ -77,6 +78,8 @@ public:
 	void SipBYE(char **dst,osip_message_t *srcmsg);
 	void SipCancel(char **dst,osip_message_t *srcmsg);
 	void CopyContact(char **dst,InfoServer m_InfoServer);
-
 	void ShowFlowQueryData(char *buffer);
+
+private:
+	void downloadImage(string url, int protocol_flag);
 };

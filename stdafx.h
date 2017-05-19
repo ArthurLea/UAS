@@ -53,9 +53,10 @@ typedef struct ptzQuery
 {
 	CString ptzQueryNumbegin;
 	CString ptzQueryNumend;
+	CString ptzQueryReceivePresetNum;
 	CString UserCode;
 	CString Address;
-	ptzQuery():ptzQueryNumbegin(""),ptzQueryNumend(""),UserCode(""),Address(""){}
+	ptzQuery():ptzQueryNumbegin(""),ptzQueryNumend(""), ptzQueryReceivePresetNum(""),UserCode(""),Address(""){}
 };
 
 

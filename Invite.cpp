@@ -73,11 +73,11 @@ void CInvite::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CInvite, CDialog)
-	ON_BN_CLICKED(IDC_BTN_TEST, &CInvite::OnBnClickedBtnTest)
 	ON_BN_CLICKED(IDC_BTN_BYE, &CInvite::OnBnClickedBtnBye)
 	ON_BN_CLICKED(IDC_BTN_PLAY, &CInvite::OnBnClickedBtnPlay)
 	ON_BN_CLICKED(IDC_BTN_CANCEL, &CInvite::OnBnClickedBtnCancel)
 	ON_CBN_SELCHANGE(IDC_SELADRESS, &CInvite::OnCbnSelchangeSeladress)
+	ON_BN_CLICKED(IDC_BTN_TEST, &CInvite::OnBnClickedBtnTest)
 END_MESSAGE_MAP()
 
 
@@ -85,10 +85,9 @@ END_MESSAGE_MAP()
 
 void CInvite::OnBnClickedBtnTest()
 {
-	// TODO: Add your control notification handler code here	
 	// get information and create XML message
 	//每次按下这个按钮，应该重置所有会话状态
-	int index=m_selAddress.GetCurSel();
+	int index = m_selAddress.GetCurSel();
 
 	CString UserCode;
 	CString Format;
@@ -98,7 +97,7 @@ void CInvite::OnBnClickedBtnTest()
 	CString TransmitMode;
 	CString Address;
 	CString Multicast;
-	CString ReceiveSocket;	
+	CString ReceiveSocket;
 	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	GetDlgItem(IDC_EDT_FORMAT)->GetWindowText(Format);
 	GetDlgItem(IDC_EDT_VIDEO)->GetWindowText(Video);
@@ -106,65 +105,80 @@ void CInvite::OnBnClickedBtnTest()
 	GetDlgItem(IDC_EDT_MAXBIT)->GetWindowText(MaxBitrate);
 	//GetDlgItem(IDC_EDT_TRANSMODE)->GetWindowText(TransmitMode);
 	GetDlgItem(IDC_EDT_PROTOCOL)->GetWindowText(Address);
-	//Address=NotifyInfo.Devices[index].Address;
-	//GetDlgItem(IDC_EDT_PROTOCOL)->SetWindowTextA(Address);
 
-	GetDlgItem(IDC_EDT_MULTICAST)->GetWindowText(Multicast);	
+	GetDlgItem(IDC_EDT_MULTICAST)->GetWindowText(Multicast);
 	GetDlgItem(IDC_EDT_SOCKET)->GetWindowText(ReceiveSocket);
 	CString XmlInvite;
-	XmlInvite="<?xml version=\"1.0\"?>\r\n";
-	XmlInvite+="<Action>\r\n";	
-	XmlInvite+="<Variable>RealMedia</Variable>\r\n";	
-	XmlInvite+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlInvite+="<Format>"+Format+"</Format>\r\n";
-	XmlInvite+="<Video>"+Video+"</Video>\r\n";
-	XmlInvite+="<Audio>"+Audio+"</Audio>\r\n";
-	XmlInvite+="<MaxBitrate>"+MaxBitrate+"</MaxBitrate>\r\n";	
-	/*XmlInvite+="<Protocol>"+Protocol+"</Protocol>\r\n";*/
-	//XmlInvite+="<Multicast>"+Multicast+"</Multicast>\r\n";
+	XmlInvite = "<?xml version=\"1.0\"?>\r\n";
+	XmlInvite += "<Action>\r\n";
+	XmlInvite += "<Variable>RealMedia</Variable>\r\n";
+	XmlInvite += "<Privilege>" + UserCode + "</Privilege>\r\n";
+	XmlInvite += "<Format>" + Format + "</Format>\r\n";
+	XmlInvite += "<Video>" + Video + "</Video>\r\n";
+	XmlInvite += "<Stream>RTP</Stream>\r\n";
+	XmlInvite += "<Audio>" + Audio + "</Audio>\r\n";
+	XmlInvite += "<MaxBitrate>" + MaxBitrate + "</MaxBitrate>\r\n";
+	XmlInvite+="<Multicast>"+Multicast+"</Multicast>\r\n";
 	//XmlInvite+="<TransmitMode>"+TransmitMode+"</TransmitMode>\r\n";	
-	XmlInvite+="<Socket>"+ReceiveSocket+"</Socket>\r\n";		
-	XmlInvite+="</Action>\r\n";	
-	//WaitForSingleObject(hMutex_uas,INFINITE);
-	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
-	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
-	char *destXMLInvite = (LPSTR)(LPCTSTR)XmlInvite;		
-	CSipMsgProcess *SipInvite=new CSipMsgProcess;	
-	pWnd->inviteAddress=Address;
-	char *SipXmlInvite=new char[MAXBUFSIZE];
-	memset(SipXmlInvite,0,MAXBUFSIZE);
-	SipInvite->SipInviteMsg(&SipXmlInvite,m_InfoServer,m_InfoClient,destXMLInvite,Address);
+	XmlInvite += "<Socket>" + ReceiveSocket + "</Socket>\r\n";
+	XmlInvite += "</Action>\r\n";
+	HWND   hnd = ::FindWindow(NULL, _T("UAS"));
+	CUASDlg*  pWnd = (CUASDlg*)CWnd::FromHandle(hnd);
+	char *destXMLInvite = (LPSTR)(LPCTSTR)XmlInvite;
+	CSipMsgProcess *SipInvite = new CSipMsgProcess;
+	pWnd->inviteAddress = Address;
+	char *SipXmlInvite = new char[MAXBUFSIZE];
+	memset(SipXmlInvite, 0, MAXBUFSIZE);
+	SipInvite->SipInviteMsg(&SipXmlInvite, m_InfoServer, m_InfoClient, destXMLInvite, Address);
 	//send invite message to client
-	if (m_InfoClient.Port=="" || m_InfoClient.IP=="")
-	{		
+	if (m_InfoClient.Port == "" || m_InfoClient.IP == "")
+	{
 		delete SipXmlInvite;
-		SipXmlInvite=NULL;
-		MessageBox("没有注册的客户端用户","UAS 提示",MB_OK|MB_ICONINFORMATION);		
+		SipXmlInvite = NULL;
+		MessageBox("没有注册的客户端用户", "UAS 提示", MB_OK | MB_ICONINFORMATION);
 		return;
-	}	
-	//pWnd->SendData(SipXmlInvite);
+	}
 	UA_Msg uas_sendtemp;
-	strcpy(uas_sendtemp.data,SipXmlInvite);	
+	strcpy(uas_sendtemp.data, SipXmlInvite);
+	EnterCriticalSection(&g_uas);
+	uas_sendqueue.push(uas_sendtemp);
+	LeaveCriticalSection(&g_uas);
+	delete SipXmlInvite;
+	SipXmlInvite = NULL;
+	//update log	
+	ShowTestData = "INVITE   ----------->\r\n";
+	ShowTestTitle = "Invite Test";
+	sInviteCallID.nStatus = Invite;
+	bACK = FALSE;
+	bBYE = FALSE;
+	bShowRealTime = FALSE;
+	pWnd->bSelectKeepLive = FALSE;
+}
+
+void CInvite::OnBnClickedBtnCancel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	OnBnClickedBtnTest();//发送INVITE
+	CString Address;
+	GetDlgItem(IDC_EDT_PROTOCOL)->GetWindowText(Address);
+	HWND   hnd=::FindWindow(NULL, _T("UAS"));
+	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
+	CSipMsgProcess *SipCancel=new CSipMsgProcess;
+	char *SipXmlCancel=new char[MAXBUFSIZE];
+	memset(SipXmlCancel,0,MAXBUFSIZE);
+	SipCancel->SipCancelMsg(&SipXmlCancel,m_InfoServer,m_InfoClient,Address);
+
+	UA_Msg uas_sendtemp;
+	strcpy(uas_sendtemp.data,SipXmlCancel);	
 	EnterCriticalSection(&g_uas);
 	uas_sendqueue.push(uas_sendtemp);		
-	LeaveCriticalSection(&g_uas);
-	//pWnd->ShowSendData(SipXmlInvite);
-	delete SipXmlInvite;
-	SipXmlInvite=NULL;
+	LeaveCriticalSection(&g_uas);	
 	//update log	
-	ShowTestData ="INVITE   ----------->\r\n";		
-	ShowTestTitle="Invite Test";
-	sInviteCallID.nStatus=Invite;
-	bACK=FALSE;
-	bBYE=FALSE;
-	bShowRealTime=FALSE;
-	//ReleaseMutex(hMutex_uas);
-	pWnd->bSelectKeepLive=FALSE;
-	//GetDlgItem(IDC_BTN_TEST)->EnableWindow(FALSE);
-	GetDlgItem(IDC_BTN_CANCEL)->EnableWindow(FALSE);
-	//pWnd->m_VideoPlay.GetDlgItem(IDC_BTN_START)->EnableWindow(FALSE);
-	pWnd->m_VideoPlay.GetDlgItem(IDC_BTN_PLAY)->EnableWindow(FALSE);
-	//pWnd->m_VideoPlay.GetDlgItem(IDC_BTN_STOP)->EnableWindow(FALSE);
+	ShowTestData ="CANCEL   ----------->\r\n";		
+	ShowTestTitle="Invite Test";					
+	//bBYE=TRUE;
+	bCANCEL=TRUE;
+	pWnd->bSelectKeepLive=TRUE;
 }
 
 void CInvite::OnBnClickedBtnBye()
@@ -195,43 +209,13 @@ void CInvite::OnBnClickedBtnPlay()
 	dlg->ShowWindow(SW_SHOW);	
 }
 
-
-void CInvite::OnBnClickedBtnCancel()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	OnBnClickedBtnTest();//发送INVITE
-	CString Address;
-	GetDlgItem(IDC_EDT_PROTOCOL)->GetWindowText(Address);
-	HWND   hnd=::FindWindow(NULL, _T("UAS"));
-	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
-	CSipMsgProcess *SipCancel=new CSipMsgProcess;
-	char *SipXmlCancel=new char[MAXBUFSIZE];
-	memset(SipXmlCancel,0,MAXBUFSIZE);
-	SipCancel->SipCancelMsg(&SipXmlCancel,m_InfoServer,m_InfoClient,Address);
-
-	UA_Msg uas_sendtemp;
-	strcpy(uas_sendtemp.data,SipXmlCancel);	
-	EnterCriticalSection(&g_uas);
-	uas_sendqueue.push(uas_sendtemp);		
-	LeaveCriticalSection(&g_uas);	
-	//update log	
-	ShowTestData ="CANCEL   ----------->\r\n";		
-	ShowTestTitle="Invite Test";					
-	//bBYE=TRUE;
-	bCANCEL=TRUE;
-	pWnd->bSelectKeepLive=TRUE;
-}
-
-
 BOOL CInvite::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
 }
-
 
 void CInvite::OnCbnSelchangeSeladress()
 {
@@ -240,3 +224,7 @@ void CInvite::OnCbnSelchangeSeladress()
 	CString Address=NotifyInfo.Devices[index].Address;
 	GetDlgItem(IDC_EDT_PROTOCOL)->SetWindowTextA(Address);
 }
+
+
+
+
