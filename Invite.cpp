@@ -115,12 +115,12 @@ void CInvite::OnBnClickedBtnTest()
 	XmlInvite += "<Privilege>" + UserCode + "</Privilege>\r\n";
 	XmlInvite += "<Format>" + Format + "</Format>\r\n";
 	XmlInvite += "<Video>" + Video + "</Video>\r\n";
-	XmlInvite += "<Stream>RTP</Stream>\r\n";
+	//XmlInvite += "<Stream>RTP</Stream>\r\n";
 	XmlInvite += "<Audio>" + Audio + "</Audio>\r\n";
 	XmlInvite += "<MaxBitrate>" + MaxBitrate + "</MaxBitrate>\r\n";
 	XmlInvite+="<Multicast>"+Multicast+"</Multicast>\r\n";
 	//XmlInvite+="<TransmitMode>"+TransmitMode+"</TransmitMode>\r\n";	
-	XmlInvite += "<Socket>" + ReceiveSocket + "</Socket>\r\n";
+	XmlInvite += "<ReceiveSocket>" + ReceiveSocket + "</ReceiveSocket>\r\n";
 	XmlInvite += "</Action>\r\n";
 	HWND   hnd = ::FindWindow(NULL, _T("UAS"));
 	CUASDlg*  pWnd = (CUASDlg*)CWnd::FromHandle(hnd);

@@ -343,7 +343,6 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 		pWnd->m_Invite.GetDlgItem(IDC_BTN_BYE)->EnableWindow(FALSE);
 		bBYE = TRUE;
 		pWnd->bSelectKeepLive = TRUE;
-		//pWnd->ShowSendData(dst);
 		pWnd->m_Invite.GetDlgItem(IDC_BTN_TEST)->EnableWindow(TRUE);
 		pWnd->m_Invite.GetDlgItem(IDC_BTN_CANCEL)->EnableWindow(TRUE);
 		delete dst;
@@ -972,9 +971,9 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 					//temp = strTemp.substr(VideoNumStart + 11, VideoNumEnd - VideoNumStart - 11);
 					//int m_multicast = atoi(temp.c_str());
 
-					if ((VideoNumStart = strTemp.find("<Socket>", 0)) == string::npos)
+					if ((VideoNumStart = strTemp.find("<SendSocket>", 0)) == string::npos)
 						return 1;
-					if ((VideoNumEnd = strTemp.find("</Socket>", VideoNumStart + 1)) == string::npos)
+					if ((VideoNumEnd = strTemp.find("</SendSocket>", VideoNumStart + 1)) == string::npos)
 						return 1;
 					//解析出socket字段中的地址和端口
 					temp = strTemp.substr(VideoNumStart + 8, VideoNumEnd - VideoNumStart - 8);
@@ -1099,9 +1098,9 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 					strcpy(strBye, datatemp);
 					delete datatemp;
 					datatemp = NULL;
-					//pWnd->m_Invite.GetDlgItem(IDC_BTN_TEST)->EnableWindow(FALSE);
+					pWnd->m_Invite.GetDlgItem(IDC_BTN_TEST)->EnableWindow(TRUE);
 					pWnd->m_Invite.GetDlgItem(IDC_BTN_BYE)->EnableWindow(TRUE);
-					pWnd->m_Invite.GetDlgItem(IDC_BTN_CANCEL)->EnableWindow(FALSE);
+					pWnd->m_Invite.GetDlgItem(IDC_BTN_CANCEL)->EnableWindow(TRUE);
 					//water:记录对方返回的totag
 					osip_to_t *dest;
 					osip_to_init(&dest);
@@ -1984,7 +1983,7 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 				//截取_URL协议
 				int protocolEnd = strURL.find("://", 0);
 				string protocol = strURL.substr(0, protocolEnd);
-				if (strcmp(protocol.c_str(), "http") == 0)
+ 				if (strcmp(protocol.c_str(), "http") == 0)
 				{
 					downloadImage(strURL, CCaptureImage::HTTP_FLAG);
 				}
