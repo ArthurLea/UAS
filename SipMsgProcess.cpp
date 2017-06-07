@@ -291,7 +291,7 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 				}
 			}
 			//其他消息
-			else if (0)
+			else
 			{
 				//另外的消息
 				ShowTestData += "<--------- NOTIFY\r\n";
@@ -307,7 +307,7 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 			}
 
 		}
-		else
+		else//目录推送
 		{
 			m_Type = NodeType;
 		}
@@ -976,9 +976,9 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 					if ((VideoNumEnd = strTemp.find("</SendSocket>", VideoNumStart + 1)) == string::npos)
 						return 1;
 					//解析出socket字段中的地址和端口
-					temp = strTemp.substr(VideoNumStart + 8, VideoNumEnd - VideoNumStart - 8);
+					temp = strTemp.substr(VideoNumStart + 12, VideoNumEnd - VideoNumStart - 12);//224.0.0.1 UDP 2300
 					int j = temp.find(' ', 0);
-					string ip = temp.substr(0, j);
+					string ip = temp.substr(0, j);//"224.0.0.1"
 					string ip_first = ip;
 					i = temp.find('P', j);
 					temp.erase(0, i + 1);
@@ -988,7 +988,7 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 					i = ip_first.find('.', 0);
 					ip_first = ip_first.substr(0, i);
 					firstnum = atoi(ip_first.c_str());
-					if (firstnum > 223)
+					if ((firstnum > 223) && (firstnum < 240))
 					{
 						m_multicast = 1;
 					}
@@ -1107,7 +1107,10 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 					osip_uri_param_t *totag;
 					dest = osip_message_get_to(m_SipMsg.msg);
 					osip_to_get_tag(dest, &totag);
-					strcpy(sInviteCallID.CurToTag, totag->gvalue);
+					if(totag != nullptr)
+						strcpy(sInviteCallID.CurToTag, totag->gvalue);
+					else
+						pWnd->MessageBox("toTag为空", "UAS 报文解析错误", MB_OK | MB_ICONERROR);
 					//water:end
 				}
 			}
@@ -2515,7 +2518,7 @@ void CSipMsgProcess::SipInviteMsg(char **dstInvite, InfoServer m_InfoServer, Inf
 	//strcpy(branch, "z9hG4bK-524287-1---");
 //	strcat(branch, sdtr);
 //	osip_via_set_branch(SipHeader->m_SipMsg.via, branch);//随机数
-														 //osip_via_set_branch(SipHeader->m_SipMsg.via,"z9hG4bK--22bd7321");//随机数
+	//osip_via_set_branch(SipHeader->m_SipMsg.via,"z9hG4bK--22bd7321");//随机数
 	osip_via_set_host(SipHeader->m_SipMsg.via, srcIP);
 	//osip_call_id_set_host(SipHeader->m_SipMsg.callid, srcIP);
 	osip_call_id_set_number(SipHeader->m_SipMsg.callid, CallID);//随机数
@@ -2536,7 +2539,7 @@ void CSipMsgProcess::SipInviteMsg(char **dstInvite, InfoServer m_InfoServer, Inf
 	osip_cseq_set_number(SipHeader->m_SipMsg.cseq, "1");
 	osip_message_set_uri(SipHeader->m_SipMsg.msg, SipHeader->m_SipMsg.uriServer);
 	osip_message_set_method(SipHeader->m_SipMsg.msg, "INVITE");
-/*
+	/*
 	char branch[20] = "z9hG4bK";
 	for (int i = 0; i < 8; i++)
 	{
@@ -3046,7 +3049,7 @@ void CSipMsgProcess::SipSubscribeMsgCancel(char **dst, InfoServer m_InfoServer, 
 	osip_via_to_str(SipHeader->m_SipMsg.via, &dest);
 	osip_message_set_via(SipHeader->m_SipMsg.msg, dest);
 	osip_free(dest);
-	osip_message_set_expires(SipHeader->m_SipMsg.msg, "90");
+	osip_message_set_expires(SipHeader->m_SipMsg.msg, "0");
 	osip_message_set_content_type(SipHeader->m_SipMsg.msg, "Application/DDCP");
 	osip_message_set_body(SipHeader->m_SipMsg.msg, Xml, strlen(Xml));
 	size_t length;

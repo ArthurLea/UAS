@@ -35,6 +35,8 @@ void CVideoQuery::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO_LIST, m_HistoryVideoList);
 	DDX_Control(pDX, IDC_SELADRESS, m_selAddress);
+	DDX_Control(pDX, IDC_EDT_BEGIN, m_BeginTime);
+	DDX_Control(pDX, IDC_EDT_END, m_EndTime);
 }
 
 
@@ -132,23 +134,26 @@ void CVideoQuery::OnBnClickedBtnGeturl()
 	CString UserCode;
 	GetDlgItem(IDC_EDT_PRIVILEGE)->GetWindowText(UserCode);
 	CString BeginTime;
-	BeginTime.Format("%s",pWnd->m_VideoInfo[nCurVideo].BeginTime);
+	//BeginTime.Format("%s",pWnd->m_VideoInfo[nCurVideo].BeginTime);
+	m_BeginTime.GetWindowTextA(BeginTime);
 	CString EndTime;
-	EndTime.Format("%s",pWnd->m_VideoInfo[nCurVideo].EndTime);
+	//EndTime.Format("%s",pWnd->m_VideoInfo[nCurVideo].EndTime);
+	m_EndTime.GetWindowTextA(EndTime);
 	CString FileName;
-	FileName.Format("%s",pWnd->m_VideoInfo[nCurVideo].Name);
+	//FileName.Format("%s",pWnd->m_VideoInfo[nCurVideo].Name);
+	m_HistoryVideoList.GetWindowTextA(FileName);
 	CString strTemp;
 	strTemp="<?xml version=\"1.0\"?>\r\n";
 	strTemp+="<Action>\r\n";	
-	//strTemp+="<Query>\r\n";
-	strTemp+="<Variable>VODByRTSP</Variable>\r\n";
+	strTemp+="<Query>\r\n";
+	strTemp+="<Variable>VOD</Variable>\r\n";
 	strTemp+="<Privilege>"+UserCode+"</Privilege>\r\n";
 	strTemp+="<FileType>2</FileType>\r\n";	
 	strTemp+="<Name>"+FileName+"</Name>\r\n";
 	strTemp+="<BeginTime>"+BeginTime+"</BeginTime>\r\n";
 	strTemp+="<EndTime>"+EndTime+"</EndTime>\r\n";
 	strTemp+="<MaxBitrate>100</MaxBitrate>\r\n";
-	//strTemp+="</Query>\r\n";
+	strTemp+="</Query>\r\n";
 	strTemp+="</Action>\r\n";
 	char *xml=(LPSTR)(LPCTSTR)strTemp;
 	char *buf=new char[MAXBUFSIZE];

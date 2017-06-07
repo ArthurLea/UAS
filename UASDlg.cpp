@@ -754,7 +754,7 @@ void CUASDlg::InitInvite()
 	m_Invite.GetDlgItem(IDC_EDT_MAXBIT)->SetWindowText("800");
 	m_Invite.GetDlgItem(IDC_EDT_TRANSMODE)->SetWindowText("null");
 	m_Invite.GetDlgItem(IDC_EDT_PROTOCOL)->SetWindowText("地址编码");
-	m_Invite.GetDlgItem(IDC_EDT_MULTICAST)->SetWindowText("1");
+	m_Invite.GetDlgItem(IDC_EDT_MULTICAST)->SetWindowText("0");
 	m_Invite.GetDlgItem(IDC_EDT_SOCKET)->SetWindowText(ipStr);
 }
 
@@ -774,8 +774,8 @@ void CUASDlg::InitHistoryVideoQuery()
 {
 	m_VideoQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
 	m_VideoQuery.GetDlgItem(IDC_EDT_FILETYPE)->SetWindowText("1");
-	m_VideoQuery.GetDlgItem(IDC_EDT_BEGINTIME)->SetWindowText("2010-03-16T13:50:50Z");
-	m_VideoQuery.GetDlgItem(IDC_EDT_ENDTIME)->SetWindowText("2010-03-16T14:50:50Z");
+	m_VideoQuery.GetDlgItem(IDC_EDT_BEGINTIME)->SetWindowText("2016-05-20T13:50:50Z");
+	m_VideoQuery.GetDlgItem(IDC_EDT_ENDTIME)->SetWindowText("2017-06-05T14:50:50Z");
 	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM)->SetWindowText("0");
 	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM2)->SetWindowText("3");
 	m_VideoQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
@@ -784,7 +784,7 @@ void CUASDlg::InitHistoryVideoQuery()
 //初始化视频回放属性页
 void CUASDlg::InitHistoryVideoPlay()
 {
-	m_VideoPlay.GetDlgItem(IDC_EDT_DESTINATION)->SetWindowText("192.168.1.7");
+	m_VideoPlay.GetDlgItem(IDC_EDT_DESTINATION)->SetWindowText("192.168.17.99");
 	m_VideoPlay.GetDlgItem(IDC_EDT_CLIENTPORT)->SetWindowText("4588-4589");
 	m_VideoPlay.GetDlgItem(IDC_EDT_RANGE)->SetWindowText("npt=0.000-");
 	m_VideoPlay.GetDlgItem(IDC_EDT_SCALE)->SetWindowText("1.0");
@@ -811,7 +811,7 @@ void CUASDlg::InitAlarm()
 	m_Alarm.GetDlgItem(IDC_EDT_LEVEL)->SetWindowText("1");
 	m_Alarm.m_AlarmTypeSel.SetCurSel(0);
 	m_Alarm.GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowText("1");
-	m_Alarm.GetDlgItem(IDC_EDT_IP)->SetWindowText("192.168.1.7");
+	m_Alarm.GetDlgItem(IDC_EDT_IP)->SetWindowText("192.168.17.99");
 	m_Alarm.GetDlgItem(IDC_EDT_PORT)->SetWindowText("5060");
 
 }
@@ -1232,7 +1232,7 @@ void CUASDlg::OnTimer(UINT_PTR nIDEvent)
 			string xml = "<?xml version=\"1.0\"?>\r\n";
 			xml += "<Action>\r\n";
 			xml += "<Notify>\r\n";
-			xml += "<Variable>RealTimeKeepAlive</Variable>\r\n";
+			xml += "<Variable>RealTimeKeepLive</Variable>\r\n";
 			xml += "</Notify>\r\n";
 			xml += "</Action>\r\n";
 			char *strxml = new char[XMLSIZE];

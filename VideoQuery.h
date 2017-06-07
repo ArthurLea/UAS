@@ -27,4 +27,6 @@ public:
 	afx_msg void OnCbnSelchangeComboList();
 	CComboBox m_selAddress;
 	afx_msg void OnCbnSelchangeSeladress();
+	CEdit m_BeginTime;
+	CEdit m_EndTime;
 };

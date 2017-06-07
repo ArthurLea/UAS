@@ -80,7 +80,6 @@ void CVideoPlay::OnBnClickedBtnStart()
 	if (j == string::npos)
 	{
 		j = ipaddr.find('/', i + 2);
-
 	}
 	ipaddr = ipaddr.substr(i + 2, j - i - 2);
 	string m_vlc_sdp_str;

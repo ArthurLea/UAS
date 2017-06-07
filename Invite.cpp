@@ -157,7 +157,6 @@ void CInvite::OnBnClickedBtnTest()
 
 void CInvite::OnBnClickedBtnCancel()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	OnBnClickedBtnTest();//发送INVITE
 	CString Address;
 	GetDlgItem(IDC_EDT_PROTOCOL)->GetWindowText(Address);
