@@ -176,8 +176,8 @@ void CInvite::OnBnClickedBtnCancel()
 	ShowTestData ="CANCEL   ----------->\r\n";		
 	ShowTestTitle="Invite Test";					
 	//bBYE=TRUE;
-	bCANCEL=TRUE;
-	pWnd->bSelectKeepLive=TRUE;
+	bCANCEL = TRUE;
+	pWnd->bSelectKeepLive = TRUE;
 }
 
 void CInvite::OnBnClickedBtnBye()
@@ -194,8 +194,8 @@ void CInvite::OnBnClickedBtnBye()
 	//update log	
 	ShowTestData ="BYE   ----------->\r\n";		
 	ShowTestTitle="Invite Test";					
-	bBYE=TRUE;
-	pWnd->bSelectKeepLive=TRUE;
+	bBYE = TRUE;
+	pWnd->bSelectKeepLive = TRUE;
 	TerminateProcess(vlc.hProcess, 0);
 	TerminateProcess(rtpsend.hProcess, 0);
 }

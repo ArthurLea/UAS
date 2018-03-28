@@ -100,7 +100,7 @@ void CCoderSet::OnBnClickedBtnSet()
 	XmlCoderSet+="<FrameRate>"+FrameRate+"</FrameRate>\r\n";
 	XmlCoderSet+="<BitRate>"+BitRate+"</BitRate>\r\n";
 	XmlCoderSet+="<Priority>"+Priority+"</Priority>\r\n";
-	XmlCoderSet += "<GOP>" + GOP + "</GOP>\r\n";
+	XmlCoderSet+="<GOP>" + GOP + "</GOP>\r\n";
 	XmlCoderSet+="<ImageQuality>"+ ImageQuality +"</ImageQuality>\r\n";
 	XmlCoderSet+="</Notify>\r\n";
 	XmlCoderSet+="</Action>\r\n";	

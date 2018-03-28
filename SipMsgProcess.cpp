@@ -250,7 +250,7 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 			if (str.find("PTZCommand") != string::npos)
 				m_Type = PTZ;
 			//AlarmNotify
-			else if(str.find("AlarmNotify",0) != string::npos)
+			else if(str.find("Alarm",0) != string::npos)
 			{
 				if ((str.find("<Level>", 0) != string::npos)
 					&& (str.find("</Level>", 0) != string::npos)
@@ -263,11 +263,20 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 					//update log
 					ShowTestData = "<--------- NOTIFY\r\n";
 					ShowTestTitle = "Alarm Send Test";
+					int alarmTypeStart = str.find("<AlarmType>", 0);
+					int alarmTypeEnd = str.find("</AlarmType>", 0);
+					CString alarmType = str.substr(alarmTypeStart + 11, alarmTypeEnd - alarmTypeStart - 11).c_str();
+				
+					int addressStart = str.find("<Address>", 0);;
+					int addressEnd = str.find("</Address>", 0);
+					CString address = str.substr(addressStart + 9, addressEnd - addressStart - 9).c_str();
+
 					CString XmlAlarmSet;
 					XmlAlarmSet = "<?xml version=\"1.0\"?>\r\n";
 					XmlAlarmSet += "<Response>\r\n";
-					XmlAlarmSet += "<Variable>AlarmNotify</Variable>\r\n";
-					XmlAlarmSet += "<AlarmType>1</AlarmType>\r\n";
+					XmlAlarmSet += "<Variable>Alarm</Variable>\r\n";
+					XmlAlarmSet += "<AlarmType>" + alarmType + "</AlarmType>\r\n";
+					XmlAlarmSet += "<Address>" + address + "</Address>\r\n";
 					XmlAlarmSet += "<Result>0</Result>\r\n";
 					XmlAlarmSet += "</Response>\r\n";
 					char *dst = new char[MAXBUFSIZE];
@@ -787,7 +796,7 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 				//	string ss(strTemp.substr(i + 7, 15));
 				//	strcpy(Common::CurrentBranch, ss.c_str());
 				//}
-				Sip200OK(&dst, m_SipMsg.msg);
+				Sip200OKForRegOrQuit(&dst, m_SipMsg.msg);
 			}
 
 			UA_Msg uas_sendtemp;
@@ -1815,7 +1824,7 @@ int CSipMsgProcess::SipParser(char *buffer, int Msglength)
 				if (nResult == 0)
 					pWnd->ShowRecvData("\t----编码器设置成功----\r\n");
 				else
-					pWnd->ShowRecvData("\t----编码器设置失败----\r\n");
+					pWnd->ShowRecvData("\t----编case Alarm码器设置失败----\r\n");
 				//update log
 				pWnd->ShowRecvData("\t----编码器测试成功----\r\n");
 				ShowTestData += " <---------  200 OK \r\n";
@@ -2033,6 +2042,10 @@ void CSipMsgProcess::Sip200OK(char **dst, osip_message_t *srcmsg)
 	osip_message_set_status_code(Sip200->m_SipMsg.msg, 200);
 	osip_message_set_reason_phrase(Sip200->m_SipMsg.msg, "OK");
 	osip_call_id_clone(srcmsg->call_id, &Sip200->m_SipMsg.msg->call_id);
+	CTime time;
+	time = CTime::GetCurrentTime();
+	CString date = time.Format("%Y-%m-%dT%H:%M:%S");
+	osip_message_set_date(Sip200->m_SipMsg.msg, date);
 	char *str2;
 	osip_from_to_str(srcmsg->from, &str2);
 	osip_message_set_from(Sip200->m_SipMsg.msg, str2);
@@ -2060,15 +2073,16 @@ void CSipMsgProcess::Sip200OK(char **dst, osip_message_t *srcmsg)
 	//osip_contact_to_str(Sip200->m_SipMsg.contact,&dest);
 	//osip_message_set_contact(Sip200->m_SipMsg.msg,dest);
 	//osip_free(dest);
-	/*HWND   hnd=::FindWindow(NULL, _T("UAS"));
-	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);*/
-	//osip_message_set_contact(Sip200->m_SipMsg.msg,contact);
+	////copy Expires
+	//osip_header *expires = NULL;
+	//osip_message_get_expires(srcmsg, 0, &expires);
+	//osip_message_set_expires(Sip200->m_SipMsg.msg, expires->hvalue);
 	//copy via
 	osip_message_get_via(srcmsg, 0, &Sip200->m_SipMsg.via);
 	osip_via_to_str(Sip200->m_SipMsg.via, &dest);
 	osip_message_set_via(Sip200->m_SipMsg.msg, dest);
 	int i = osip_message_get_via(srcmsg, 1, &Sip200->m_SipMsg.via);
-	string strTemp(Common::CurrentBranch);
+	//string strTemp(Common::CurrentBranch);
 	//if (!strTemp.empty())
 	//{
 	//osip_via_set_branch(Sip200->m_SipMsg.via, Common::CurrentBranch);
@@ -2088,16 +2102,99 @@ void CSipMsgProcess::Sip200OK(char **dst, osip_message_t *srcmsg)
 	osip_free(dest);
 	osip_message_to_str(Sip200->m_SipMsg.msg, &dest, &len);
 	memset(*dst, 0, MAXBUFSIZE);
-	string strtemp = dest;
-	int index = strtemp.find("From");
-	strtemp.insert(index, st0.GetBuffer(st0.GetLength()));
+	string sipTemp = dest;
+	int index = sipTemp.find("From");
+	sipTemp.insert(index, st0.GetBuffer(st0.GetLength()));
 	//memcpy(*dst,dest,len);
-	strcpy(*dst, strtemp.c_str());
-
+	strcpy(*dst, sipTemp.c_str());
 	osip_free(dest);
 	osip_free(str2);
 }
 
+void CSipMsgProcess::Sip200OKForRegOrQuit(char **dst, osip_message_t *srcmsg)
+{
+	char FromTag[10];
+	int RandData;
+	RandData = rand();
+	char str[8];
+	itoa(RandData, str, 10);
+	strcpy(FromTag, str);
+	//生成200 OK报文
+	char *dest = NULL;
+	size_t len = 0;
+	CSipMsgProcess *Sip200 = new CSipMsgProcess;
+	osip_message_set_version(Sip200->m_SipMsg.msg, "SIP/2.0");
+	osip_message_set_status_code(Sip200->m_SipMsg.msg, 200);
+	osip_message_set_reason_phrase(Sip200->m_SipMsg.msg, "OK");
+	osip_call_id_clone(srcmsg->call_id, &Sip200->m_SipMsg.msg->call_id);
+	CTime time;
+	time = CTime::GetCurrentTime();
+	CString date = time.Format("%Y-%m-%dT%H:%M:%S");
+	osip_message_set_date(Sip200->m_SipMsg.msg, date);
+	char *str2;
+	osip_from_to_str(srcmsg->from, &str2);
+	osip_message_set_from(Sip200->m_SipMsg.msg, str2);
+	if (srcmsg->to->gen_params.nb_elt == 0)
+	{
+		osip_to_clone(srcmsg->to, &Sip200->m_SipMsg.msg->to);
+		osip_to_set_tag(Sip200->m_SipMsg.msg->to, FromTag);
+	}
+	else
+	{
+		char *str1;
+		osip_to_to_str(srcmsg->to, &str1);
+		osip_message_set_to(Sip200->m_SipMsg.msg, str1);
+		osip_free(str1);
+	}
+	/*osip_from_clone(srcmsg->from,&Sip200->m_SipMsg.msg->from);
+	osip_to_clone(srcmsg->to,&Sip200->m_SipMsg.msg->to);
+	if (srcmsg->to->gen_params.nb_elt==0 )
+	{
+	osip_to_set_tag(Sip200->m_SipMsg.msg->to,FromTag);
+	}*/
+	osip_cseq_clone(srcmsg->cseq, &Sip200->m_SipMsg.msg->cseq);
+	//copy contact
+	osip_message_get_contact(srcmsg, 0, &Sip200->m_SipMsg.contact);
+	osip_contact_to_str(Sip200->m_SipMsg.contact, &dest);
+	osip_message_set_contact(Sip200->m_SipMsg.msg, dest);
+	osip_free(dest);
+	//copy Expires
+	osip_header *expires = NULL;
+	osip_message_get_expires(srcmsg, 0, &expires);
+	osip_message_set_expires(Sip200->m_SipMsg.msg, expires->hvalue);
+	//copy via
+	osip_message_get_via(srcmsg, 0, &Sip200->m_SipMsg.via);
+	osip_via_to_str(Sip200->m_SipMsg.via, &dest);
+	osip_message_set_via(Sip200->m_SipMsg.msg, dest);
+	int i = osip_message_get_via(srcmsg, 1, &Sip200->m_SipMsg.via);
+	//string strTemp(Common::CurrentBranch);
+	//if (!strTemp.empty())
+	//{
+	//osip_via_set_branch(Sip200->m_SipMsg.via, Common::CurrentBranch);
+	//}
+	//osip_message_set_via(Sip200->m_SipMsg.msg,dest);
+	CString st0;
+	if (1 == i)
+	{
+		osip_via_to_str(Sip200->m_SipMsg.via, &dest);
+		st0 = dest;
+		st0 = "Via: " + st0 + "\r\n";
+	}
+	else
+	{
+		st0 = "";
+	}
+	osip_free(dest);
+	osip_message_to_str(Sip200->m_SipMsg.msg, &dest, &len);
+	memset(*dst, 0, MAXBUFSIZE);
+	string sipTemp = dest;
+	int index = sipTemp.find("From");
+	sipTemp.insert(index, st0.GetBuffer(st0.GetLength()));
+	//memcpy(*dst,dest,len);
+	strcpy(*dst, sipTemp.c_str());
+	osip_free(dest);
+	osip_free(str2);
+}
 void CSipMsgProcess::SipACK(char **dst, osip_message_t *srcmsg)
 {
 	char FromTag[10];
@@ -2164,11 +2261,10 @@ void CSipMsgProcess::SipBYE(char **dst, osip_message_t *srcmsg)
 	osip_message_set_version(Sip->m_SipMsg.msg, "SIP/2.0");
 	osip_call_id_clone(srcmsg->call_id, &Sip->m_SipMsg.msg->call_id);
 	/*HWND   hnd=::FindWindow(NULL, _T("UAS"));
-	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);	*/
-	//osip_from_set_url(Sip->m_SipMsg.from,srcmsg->from->url);
-	//osip_from_set_displayname(Sip->m_SipMsg.from,srcmsg->from->displayname);
+	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);	
+	osip_from_set_url(Sip->m_SipMsg.from,srcmsg->from->url);
+	osip_from_set_displayname(Sip->m_SipMsg.from,srcmsg->from->displayname);*/
 	osip_from_set_tag(Sip->m_SipMsg.from, sInviteCallID.CurTag);
-	//osip_from_to_str(Sip->m_SipMsg.from,&dest);
 	osip_message_set_from(Sip->m_SipMsg.msg, ByeFrom);
 	/*osip_to_set_url(Sip->m_SipMsg.to,srcmsg->to->url);
 	osip_to_set_displayname(Sip->m_SipMsg.to,srcmsg->to->displayname);
@@ -2179,26 +2275,22 @@ void CSipMsgProcess::SipBYE(char **dst, osip_message_t *srcmsg)
 	osip_cseq_set_method(Sip->m_SipMsg.cseq, "BYE");
 	osip_cseq_set_number(Sip->m_SipMsg.cseq, "2");
 	osip_message_set_contact(Sip->m_SipMsg.msg, contact);
-	/*osip_message_get_via(srcmsg,0,&Sip->m_SipMsg.via);
-	osip_via_to_str(Sip->m_SipMsg.via,&dest);*/
-	string temp(ByeVia);
-	int i = 0;
-	//if ((i = temp.find(";branch")) == string::npos)
-//	{
-	//	osip_message_set_via(Sip->m_SipMsg.msg, ByeVia);
-//	}
-//	else
-//	{
-		temp.erase(i, temp.length() - i);
-		osip_message_set_via(Sip->m_SipMsg.msg, temp.c_str());
-//	}
 
-
+	///////////////////////////////////////////////////
+	/*
+		modified by lee
+	*/
+	osip_message_get_via(srcmsg, 0, &Sip->m_SipMsg.via);
+	osip_via_to_str(Sip->m_SipMsg.via, &dest);
+	osip_message_set_via(Sip->m_SipMsg.msg, dest);
+	osip_free(dest);
+	///////////////////////////////////////////////////	
 	osip_cseq_to_str(Sip->m_SipMsg.cseq, &dest);
 	osip_message_set_cseq(Sip->m_SipMsg.msg, dest);
 	osip_free(dest);
 	osip_message_set_max_forwards(Sip->m_SipMsg.msg, "70");
 	osip_message_to_str(Sip->m_SipMsg.msg, &dest, &len);
+
 	memset(*dst, 0, MAXBUFSIZE);
 	memcpy(*dst, dest, len);
 	osip_free(dest);
@@ -2318,7 +2410,7 @@ void CSipMsgProcess::Sip401(char **dst, osip_message_t *srcmsg)
 	/*HWND   hnd=::FindWindow(NULL, _T("UAS"));
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);*/
 	osip_message_set_contact(Sip200->m_SipMsg.msg, contact);
-	osip_message_set_expires(Sip200->m_SipMsg.msg, "90");
+	osip_message_set_expires(Sip200->m_SipMsg.msg, "60");
 	//copy via
 	int i = osip_message_get_via(srcmsg, 0, &Sip200->m_SipMsg.via);
 	osip_via_to_str(Sip200->m_SipMsg.via, &dest);
@@ -2510,15 +2602,6 @@ void CSipMsgProcess::SipInviteMsg(char **dstInvite, InfoServer m_InfoServer, Inf
 	osip_via_set_version(SipHeader->m_SipMsg.via, "2.0");
 	osip_via_set_protocol(SipHeader->m_SipMsg.via, "UDP");
 	osip_via_set_port(SipHeader->m_SipMsg.via, srcPort);
-	//osip_via_set_branch(via,"123456789");//随机数
-	//RandData = rand();
-//	char sdtr[8];
-	//char branch[50];
-	//itoa(RandData, sdtr, 16);
-	//strcpy(branch, "z9hG4bK-524287-1---");
-//	strcat(branch, sdtr);
-//	osip_via_set_branch(SipHeader->m_SipMsg.via, branch);//随机数
-	//osip_via_set_branch(SipHeader->m_SipMsg.via,"z9hG4bK--22bd7321");//随机数
 	osip_via_set_host(SipHeader->m_SipMsg.via, srcIP);
 	//osip_call_id_set_host(SipHeader->m_SipMsg.callid, srcIP);
 	osip_call_id_set_number(SipHeader->m_SipMsg.callid, CallID);//随机数
@@ -2539,15 +2622,15 @@ void CSipMsgProcess::SipInviteMsg(char **dstInvite, InfoServer m_InfoServer, Inf
 	osip_cseq_set_number(SipHeader->m_SipMsg.cseq, "1");
 	osip_message_set_uri(SipHeader->m_SipMsg.msg, SipHeader->m_SipMsg.uriServer);
 	osip_message_set_method(SipHeader->m_SipMsg.msg, "INVITE");
-	/*
-	char branch[20] = "z9hG4bK";
-	for (int i = 0; i < 8; i++)
-	{
-		RandData = rand() % 10;
-		branch[i + 7] = RandData + '0';
-	}
-	osip_via_set_branch(SipHeader->m_SipMsg.via, branch);//随机数
-	*/
+	
+	//char branch[20] = "z9hG4bK";
+	//for (int i = 0; i < 8; i++)
+	//{
+	//	RandData = rand() % 10;
+	//	branch[i + 7] = RandData + '0';
+	//}
+	//osip_via_set_branch(SipHeader->m_SipMsg.via, branch);//随机数
+	//strcpy(Common::CurrentBranch, branch);
 	osip_contact_set_url(SipHeader->m_SipMsg.contact, SipHeader->m_SipMsg.uriClient);
 	osip_contact_set_displayname(SipHeader->m_SipMsg.contact, srcUserName);
 	osip_message_set_max_forwards(SipHeader->m_SipMsg.msg, "70");
@@ -2868,7 +2951,6 @@ void CSipMsgProcess::SipSubscribeMsg(char **dst, InfoServer m_InfoServer, InfoCl
 	//itoa(RandData,sdtr,16);
 	//strcpy(branch,"z9hG4bK-");
 	//strcat(branch,sdtr);
-	//osip_via_set_branch(SipHeader->m_SipMsg.via,branch);//随机数
 	char branch[20] = "z9hG4bK";
 	for (int i = 0; i < 8; i++)
 	{

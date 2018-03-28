@@ -133,7 +133,8 @@ void CVideoPlay::OnBnClickedBtnPlay()
 	}	
 	//Play+="Range: "+strRange+"\r\n";
 	Play+="Scale: "+strScale+"\r\n";
-	Play+="\r\n\r\n";
+	//Play += "\r\n\r\n";
+	Play+="\r\n";
 	char *dest = (LPSTR)(LPCTSTR)Play;
 	pWnd->SendTCPMsg(dest);
 	//pWnd->ShowSendData(dest);

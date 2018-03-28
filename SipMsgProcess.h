@@ -48,6 +48,7 @@ public:
 	//clone from and to
 	void Sip200Xml(char **dstBuf,osip_message_t *srcmsg,CString Xml);
 	void Sip200OK(char **dst,osip_message_t *srcmsg);
+	void Sip200OKForRegOrQuit(char **dst, osip_message_t *srcmsg);
 	void Sip400(char **dst,osip_message_t *srcmsg);	
 	void Sip401(char **dst,osip_message_t *srcmsg);	
 	//void Sip600(char **dst,osip_message_t *srcmsg);

@@ -1514,7 +1514,6 @@ void CUASDlg::OnCbnSelchangeComboIp()
 	m_ComboxLocalIP.GetWindowTextA(selIpStr);
 	GetDlgItem(IDC_STR_LOCALIP)->SetWindowTextA(selIpStr);
 	m_InfoServer.IP = selIpStr;
-
 }
 
 void CUASDlg::OnBnClickedButtonReboot()
