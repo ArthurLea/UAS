@@ -9,31 +9,7 @@
 #include <algorithm>
 #include "Common.h"
 extern InfoNotify NotifyInfo;
-extern BOOL bNetSet;
-extern StatusCallID SCallId;
 extern StatusCallID SAlarmCallID;
-extern StatusCallID sInviteCallID;
-extern CallID InviteKeepAliveID;	
-extern char *ByeVia;
-extern char *ByeFrom;
-extern char *ByeTo;	
-extern BOOL bACK;
-extern BOOL bBYE;	
-extern BOOL bShowRealTime;
-extern BOOL bNodeParent;
-extern char strBye[MAXBUFSIZE];
-//判断是否是心跳信息
-extern char *contact;
-extern BOOL bNodeType;
-extern int nOverTime;
-extern int nCurrentTime;
-extern int nTimeCount;
-extern time_t oldTime,currentTime;
-extern BOOL bOverTime;	
-extern BOOL bFlag;
-extern BOOL bVerify;	
-extern BOOL bUDPSipConnect;
-extern char strPlayUrl[250];
 //成员变量
 extern InfoServer m_InfoServer;
 extern InfoClient m_InfoClient;
@@ -78,21 +54,22 @@ void CAlarm::OnBnClickedBtnAlarmSet()
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	//Create XML message
-	CString UserCode;
-	CString Level;
-	CString AlarmType;
-	CString Address;
-	CString AcceptIP;
-	CString AcceptPort;
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
-	GetDlgItem(IDC_EDT_LEVEL)->GetWindowText(Level);
-	GetDlgItem(IDC_EDT_ALARM_TYPE)->GetWindowText(AlarmType);
-	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(Address);
-	GetDlgItem(IDC_EDT_IP)->GetWindowText(AcceptIP);
-	GetDlgItem(IDC_EDT_PORT)->GetWindowText(AcceptPort);
+	CString DeviceID;
+	CString StartAlarmPrivilege;
+	CString EndAlarmPrivilege;
+	CString StartTime;
+	CString EndTime;
+	CString AlarmMethod;
+	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(StartAlarmPrivilege);
+	GetDlgItem(IDC_EDT_LEVEL)->GetWindowText(EndAlarmPrivilege);
+	GetDlgItem(IDC_EDT_IP)->GetWindowText(StartTime);
+	GetDlgItem(IDC_EDT_PORT)->GetWindowText(EndTime);
+	GetDlgItem(IDC_EDT_ALARM_TYPE)->GetWindowText(AlarmMethod);
 
 	//判断是否已经预定了此事件
-	string nowOperatorEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
+	string nowOperatorEventMsg = StartAlarmPrivilege + EndAlarmPrivilege + AlarmMethod + DeviceID 
+		+ StartTime + AlarmMethod;
 	Common::nowOperatorEventMsg = nowOperatorEventMsg;//做一次缓存
 	vector<string>::iterator it = find(Common::curAlreadyReserveEvent.begin(),
 		Common::curAlreadyReserveEvent.end(), nowOperatorEventMsg);
@@ -105,17 +82,16 @@ void CAlarm::OnBnClickedBtnAlarmSet()
 	{
 		CString XmlAlarmSet;
 		XmlAlarmSet = "<?xml version=\"1.0\"?>\r\n";
-		XmlAlarmSet += "<Action>\r\n";
-		XmlAlarmSet += "<Notify>\r\n";
-		XmlAlarmSet += "<Variable>AlarmSubscribe</Variable>\r\n";
-		XmlAlarmSet += "<Privilege>" + UserCode + "</Privilege>\r\n";
-		XmlAlarmSet += "<Address>" + Address + "</Address>\r\n";
-		XmlAlarmSet += "<Level>" + Level + "</Level>\r\n";
-		XmlAlarmSet += "<AlarmType>" + AlarmType + "</AlarmType>\r\n";
-		XmlAlarmSet += "<AcceptIp>" + AcceptIP + "</AcceptIp>\r\n";
-		XmlAlarmSet += "<AcceptPort>" + AcceptPort + "</AcceptPort>\r\n";
-		XmlAlarmSet += "</Notify>\r\n";
-		XmlAlarmSet += "</Action>\r\n";
+		XmlAlarmSet += "<Query>\r\n";
+		XmlAlarmSet += "<CmdType>AlarmSubscribe</CmdType>\r\n";
+		XmlAlarmSet += "<SN>17430</SN>\r\n";
+		XmlAlarmSet += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+		XmlAlarmSet += "<StartAlarmPriority>" + StartAlarmPrivilege + "</StartAlarmPriority>\r\n";
+		XmlAlarmSet += "<EndAlarmPriority>" + EndAlarmPrivilege + "</EndAlarmPriority>\r\n";
+		XmlAlarmSet += "<StartTime>" + StartTime + "</StartTime>\r\n";
+		XmlAlarmSet += "<EndTime>" + EndTime + "</EndTime>\r\n";
+		XmlAlarmSet += "<AlarmMethod>" + AlarmMethod + "</AlarmMethod>\r\n";
+		XmlAlarmSet += "</Query>\r\n";
 		char *destXMLAlarmSet = (LPSTR)(LPCTSTR)XmlAlarmSet;
 		CSipMsgProcess *SipAlarm = new CSipMsgProcess;
 		char *SipXmlAlarm = new char[MAXBUFSIZE];
@@ -157,20 +133,22 @@ void CAlarm::OnBnClickedBtnAlarmCancel()
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	//Create XML message
-	CString UserCode;
-	CString Level;
-	CString AlarmType;
-	CString Address;
-	CString AcceptIP;
-	CString AcceptPort;
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
-	GetDlgItem(IDC_EDT_LEVEL)->GetWindowText(Level);
-	GetDlgItem(IDC_EDT_ALARM_TYPE)->GetWindowText(AlarmType);
-	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(Address);
-	GetDlgItem(IDC_EDT_IP)->GetWindowText(AcceptIP);
-	GetDlgItem(IDC_EDT_PORT)->GetWindowText(AcceptPort);
+	CString DeviceID;
+	CString StartAlarmPrivilege;
+	CString EndAlarmPrivilege;
+	CString StartTime;
+	CString EndTime;
+	CString AlarmMethod;
+	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(StartAlarmPrivilege);
+	GetDlgItem(IDC_EDT_LEVEL)->GetWindowText(EndAlarmPrivilege);
+	GetDlgItem(IDC_EDT_IP)->GetWindowText(StartTime);
+	GetDlgItem(IDC_EDT_PORT)->GetWindowText(EndTime);
+	GetDlgItem(IDC_EDT_ALARM_TYPE)->GetWindowText(AlarmMethod);
+
 	//判断是否已经预定了此事件
-	string nowOperatorEventMsg = UserCode + Level + AlarmType + Address + AcceptIP + AcceptPort;
+	string nowOperatorEventMsg = StartAlarmPrivilege + EndAlarmPrivilege + AlarmMethod + DeviceID
+		+ StartTime + AlarmMethod;
 	Common::nowOperatorEventMsg = nowOperatorEventMsg;//做一次缓存
 	vector<string>::iterator it = find(Common::curAlreadyReserveEvent.begin(),
 		Common::curAlreadyReserveEvent.end(), nowOperatorEventMsg);
@@ -181,18 +159,17 @@ void CAlarm::OnBnClickedBtnAlarmCancel()
 		//Common::curAlreadyReserveEvent.erase(it);
 
 		CString XmlAlarmSet;
-		XmlAlarmSet="<?xml version=\"1.0\"?>\r\n";
-		XmlAlarmSet+="<Action>\r\n";
-		XmlAlarmSet+="<Notify>\r\n";
-		XmlAlarmSet+="<Variable>AlarmSubscribe</Variable>\r\n";
-		XmlAlarmSet+="<Privilege>"+UserCode+"</Privilege>\r\n";
-		XmlAlarmSet+="<Address>"+Address+"</Address>\r\n";
-		XmlAlarmSet+="<Level>"+Level+"</Level>\r\n";
-		XmlAlarmSet+="<AlarmType>"+AlarmType+"</AlarmType>\r\n";	
-		XmlAlarmSet+="<AcceptIp>"+AcceptIP+"</AcceptIp>\r\n";
-		XmlAlarmSet+="<AcceptPort>"+AcceptPort+"</AcceptPort>\r\n";	
-		XmlAlarmSet+="</Notify>\r\n";
-		XmlAlarmSet+="</Action>\r\n";
+		XmlAlarmSet = "<?xml version=\"1.0\"?>\r\n";
+		XmlAlarmSet += "<Query>\r\n";
+		XmlAlarmSet += "<CmdType>AlarmSubscribe</CmdType>\r\n";
+		XmlAlarmSet += "<SN>17430</SN>\r\n";
+		XmlAlarmSet += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+		XmlAlarmSet += "<StartAlarmPriority>" + StartAlarmPrivilege + "</StartAlarmPriority>\r\n";
+		XmlAlarmSet += "<EndAlarmPriority>" + EndAlarmPrivilege + "</EndAlarmPriority>\r\n";
+		XmlAlarmSet += "<StartTime>" + StartTime + "</StartTime>\r\n";
+		XmlAlarmSet += "<EndTime>" + EndTime + "</EndTime>\r\n";
+		XmlAlarmSet += "<AlarmMethod>" + AlarmMethod + "</AlarmMethod>\r\n";
+		XmlAlarmSet += "</Query>\r\n";
 		char *destXMLAlarmSet = (LPSTR)(LPCTSTR)XmlAlarmSet;
 		CSipMsgProcess *SipAlarm=new CSipMsgProcess;
 		char *SipXmlAlarm=new char[MAXBUFSIZE];

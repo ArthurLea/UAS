@@ -51,27 +51,21 @@ void CDeviceInfQuery::OnBnClickedDeviceinfquery()
 	//release the Video information memory
 	vector<InfoVideo>().swap(pWnd->m_VideoInfo);	
 	//m_HistoryVideoList.ResetContent();
-	CString Privilege;//权限功能码
-	CString Address;
-	CString FileType;
-	CString MaxFileNum;
-	CString BeginTime;
-	CString EndTime;
-	GetDlgItem(IDC_EDT_PRIVILEGE)->GetWindowText(Privilege);
-	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(Address);
-	pWnd->deviceInfAddress=Address;
+	CString SN;//权限功能码
+	CString DeviceID;
+	GetDlgItem(IDC_EDT_PRIVILEGE)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(DeviceID);
+	pWnd->deviceInfAddress= DeviceID;
 	CString strTemp;
 	strTemp="<?xml version=\"1.0\"?>\r\n";
-	strTemp+="<Action>\r\n";	
 	strTemp+="<Query>\r\n";
-	strTemp+="<Variable>DeviceInfo</Variable>\r\n";
-	strTemp+="<Privilege>"+ Privilege +"</Privilege>\r\n";
+	strTemp+="<CmdType>DeviceInfo</CmdType>\r\n";
+	strTemp+="<SN>"+ SN +"</SN>\r\n";
 	strTemp+="</Query>\r\n";
-	strTemp+="</Action>\r\n";
 	char *xml=(LPSTR)(LPCTSTR)strTemp;
 	char *buf=new char[MAXBUFSIZE];
 	CSipMsgProcess *sipDeviceInfQuery=new CSipMsgProcess;
-	sipDeviceInfQuery->DeviceInfQuerySipXmlMsg(&buf,m_InfoServer,Address,m_InfoClient,xml);	
+	sipDeviceInfQuery->DeviceInfQuerySipXmlMsg(&buf,m_InfoServer, DeviceID,m_InfoClient,xml);
 	//send message to client
 	if (m_InfoClient.Port=="" || m_InfoClient.IP=="")
 	{		
@@ -95,8 +89,16 @@ void CDeviceInfQuery::OnBnClickedDeviceinfquery()
 
 void CDeviceInfQuery::OnCbnSelchangeSeladress()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	int index=m_selAddress.GetCurSel();
 	CString Address=NotifyInfo.Devices[index].Address;
 	GetDlgItem(IDC_EDT_ADDRESS)->SetWindowTextA(Address);
+}
+
+BOOL CDeviceInfQuery::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("17430");
+
+	return 0;
 }

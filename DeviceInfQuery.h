@@ -23,4 +23,5 @@ public:
 	afx_msg void OnBnClickedDeviceinfquery();
 	CComboBox m_selAddress;
 	afx_msg void OnCbnSelchangeSeladress();
+	virtual BOOL OnInitDialog();
 };

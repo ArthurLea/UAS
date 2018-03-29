@@ -94,7 +94,7 @@ void CCoderSet::OnBnClickedBtnSet()
 	XmlCoderSet="<?xml version=\"1.0\"?>\r\n";
 	XmlCoderSet+="<Action>\r\n";
 	XmlCoderSet+="<Notify>\r\n";
-	XmlCoderSet+="<Variable>EncoderSet</Variable>\r\n";	
+	XmlCoderSet+="<CmdType>EncoderSet</CmdType>\r\n";	
 	XmlCoderSet+="<Privilege>"+ Privilege +"</Privilege>\r\n";
 	XmlCoderSet+="<Format>"+Format+"</Format>\r\n";
 	XmlCoderSet+="<FrameRate>"+FrameRate+"</FrameRate>\r\n";

@@ -165,7 +165,7 @@ void CPSTVSetTime::OnBnClickedButtonSettime()
 	XmlTimeSet = "<?xml version=\"1.0\"?>\r\n";
 	XmlTimeSet += "<Action>\r\n";
 	XmlTimeSet+="<Notify>\r\n";
-	XmlTimeSet += "<Variable>TimeSet</Variable>\r\n";
+	XmlTimeSet += "<CmdType>TimeSet</CmdType>\r\n";
 	XmlTimeSet += "<Time>" + strTime + "</Time>\r\n";
 	XmlTimeSet+="<Privilege>" + privilege + "</Privilege>\r\n";//用户的权限码
 	XmlTimeSet+="</Notify>\r\n";

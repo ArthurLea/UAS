@@ -55,12 +55,22 @@ public:
 	//alarm
 	void SipSubscribeMsg(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,char *Xml);
 	void SipSubscribeMsgCancel(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,char *Xml);
+
+	//alarm_event notify distribute
+	void SipAlarmEventNotifyMsg(char **dst, InfoServer m_InfoServer, InfoClient m_InfoClient, char *Xml);
+
 	// sip do method
 	void SipTimeSetXmlMsg(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,char *Xml);
-	void CSipMsgProcess::SipCaptureImageMsg(char **dst, InfoServer m_InfoServer, InfoClient m_InfoClient, char *Xml);
+	void CSipMsgProcess::SipCaptureImageMsg(char **dst, InfoServer m_InfoServer, InfoClient m_InfoClient,char *cameraAddress, char *Xml);
 	void SipCancelMsg(char **dstCancel,InfoServer m_InfoServer,InfoClient m_InfoClient,CString address);
 	void PreSetBitSipXmlMsg(char **dst,InfoServer m_InfoServer,InfoClient m_InfoClient,CString address,char *Xml);
-	void CatalogQuerySipXmlMsg(char **dst,InfoServer m_InfoServer,CString address,InfoClient m_InfoClient,char *Xml);
+	
+	/****************************************************************************************************************************/
+	/*add some function for GB28181**********/
+	/****************************************************************************************************************************/
+	void CatalogQuerySipXmlMsg(char **dst, InfoServer m_InfoServer, CString address, InfoClient m_InfoClient, char *Xml);
+	void DeviceStatusQueryXmlMsg(char **dst,InfoServer m_InfoServer,CString address,InfoClient m_InfoClient,char *Xml);
+	
 	void DeviceInfQuerySipXmlMsg(char **dst,InfoServer m_InfoServer,CString address,InfoClient m_InfoClient,char *Xml);
 	void FlowQuerySipXmlMsg(char **dst,InfoServer m_InfoServer,CString address,InfoClient m_InfoClient,char *Xml);
 	void VideoSipXmlMsg(char **dst,InfoServer m_InfoServer,CString address,InfoClient m_InfoClient,char *Xml);

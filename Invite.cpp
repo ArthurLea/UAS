@@ -5,7 +5,6 @@
 #include "UAS.h"
 #include "Invite.h"
 #include "UASDlg.h"
-#include "Player.h"
 #include "SipMsgProcess.h"
 extern SHELLEXECUTEINFO rtpsend;
 extern SHELLEXECUTEINFO vlc;
@@ -111,7 +110,7 @@ void CInvite::OnBnClickedBtnTest()
 	CString XmlInvite;
 	XmlInvite = "<?xml version=\"1.0\"?>\r\n";
 	XmlInvite += "<Action>\r\n";
-	XmlInvite += "<Variable>RealMedia</Variable>\r\n";
+	XmlInvite += "<CmdType>RealMedia</CmdType>\r\n";
 	XmlInvite += "<Privilege>" + UserCode + "</Privilege>\r\n";
 	XmlInvite += "<Format>" + Format + "</Format>\r\n";
 	XmlInvite += "<Video>" + Video + "</Video>\r\n";
@@ -202,10 +201,6 @@ void CInvite::OnBnClickedBtnBye()
 
 void CInvite::OnBnClickedBtnPlay()
 {
-	// TODO: Add your control notification handler code here	
-	CPlayer *dlg=new CPlayer();
-	dlg->Create(IDD_DLG_PLAYER,NULL);
-	dlg->ShowWindow(SW_SHOW);	
 }
 
 BOOL CInvite::OnInitDialog()

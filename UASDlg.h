@@ -21,6 +21,9 @@
 #include "CoderSet.h"
 #include "PSTVSetTime.h"
 #include "CaptureImage.h"
+
+//modified by lee for 28181 
+#include "EventNoticeDistribute.h"
 //自定义消息
 #define WM_RECVDATA    (WM_USER+100)
 #define  WM_SENDDATA   (WM_USER+101)
@@ -53,12 +56,12 @@ public:
 	void InitNetSet();
 	void InitInvite();
 	void InitPTZ();
-	void InitHistoryVideoQuery();
+	//void InitHistoryVideoQuery();
 	void InitHistoryVideoPlay();
 	void InitCoderSet();
 	void InitAlarm();
-	void InitCatalogQuery();
-	void InitDeviceInfQuery();
+	//void InitCatalogQuery();
+	//void InitDeviceInfQuery();
 	void InitFlowQuery();
 	void InitEnableWindow();
 	int InitSocket(int port);
@@ -103,43 +106,45 @@ public:
 	afx_msg void OnBnClickedCancel();	
 	int nTcpCesq;
 	int nCurCesq;
-
+//modified by lee for 28181 
 public:
-		vector<InfoVideo> m_VideoInfo;
-		///////////TCP communication	
-		LRESULT OnReceive(WPARAM wparam=NULL, LPARAM lparam=NULL);
-		LRESULT OnServerClose(WPARAM wparam=NULL, LPARAM lparam=NULL);
-		LRESULT OnConnect(WPARAM wparam=NULL, LPARAM lparam=NULL);
-		BOOL TCPConnect(CString TCPIP,CString TCPPort);
-		int AnalyseMsg(char* msg);
-		void SendTCPMsg(const char *Msg);
-		CMySocket m_TCPSocket;
-		BOOL		m_bConnect;	
-		CString rtspUrl;
-		CString RTSPIP;
-		CString RTSPPort;
-		BOOL bRTSPLIVE;	
-		BOOL brtspKeeplive;	
-		CString inviteAddress;
-		CString videoAddress;
-		CString encodeAddress;
-		CString catalogAddress;
-		CString deviceInfAddress;
-		CString flowAddress;
-		//实时流和历史视频回放选择变量
-		BOOL bSelectKeepLive;
-		int nRealtime;
-		BOOL bRealTimeKeepLive;
-		int nPtz;	
-		BOOL bSeesion;
-		CString strSession;
-		afx_msg void OnCbnSelchangeCombo1();
-		afx_msg void OnStnClickedSabout();
-		afx_msg void OnBnClickedCheck1();
-		BOOL m_bIsShowKeepAliveMsg;
-		CString m_CombIP;
-		CComboBox m_ComboxLocalIP;
-		afx_msg void OnCbnSelchangeComboIp();
-		afx_msg void OnBnClickedButtonReboot();
+	CEventNoticeDistribute m_CeventNotice;
+public:
+	vector<InfoVideo> m_VideoInfo;
+	///////////TCP communication	
+	LRESULT OnReceive(WPARAM wparam=NULL, LPARAM lparam=NULL);
+	LRESULT OnServerClose(WPARAM wparam=NULL, LPARAM lparam=NULL);
+	LRESULT OnConnect(WPARAM wparam=NULL, LPARAM lparam=NULL);
+	BOOL TCPConnect(CString TCPIP,CString TCPPort);
+	int AnalyseMsg(char* msg);
+	void SendTCPMsg(const char *Msg);
+	CMySocket m_TCPSocket;
+	BOOL		m_bConnect;	
+	CString rtspUrl;
+	CString RTSPIP;
+	CString RTSPPort;
+	BOOL bRTSPLIVE;	
+	BOOL brtspKeeplive;	
+	CString inviteAddress;
+	CString videoAddress;
+	CString encodeAddress;
+	CString catalogAddress;
+	CString deviceInfAddress;
+	CString flowAddress;
+	//实时流和历史视频回放选择变量
+	BOOL bSelectKeepLive;
+	int nRealtime;
+	BOOL bRealTimeKeepLive;
+	int nPtz;	
+	BOOL bSeesion;
+	CString strSession;
+	afx_msg void OnCbnSelchangeCombo1();
+	afx_msg void OnStnClickedSabout();
+	afx_msg void OnBnClickedCheck1();
+	BOOL m_bIsShowKeepAliveMsg;
+	CString m_CombIP;
+	CComboBox m_ComboxLocalIP;
+	afx_msg void OnCbnSelchangeComboIp();
+	afx_msg void OnBnClickedButtonReboot();
 };
 

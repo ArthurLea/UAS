@@ -29,4 +29,7 @@ public:
 	afx_msg void OnCbnSelchangeSeladress();
 	CEdit m_BeginTime;
 	CEdit m_EndTime;
+
+public:
+	virtual BOOL OnInitDialog();
 };

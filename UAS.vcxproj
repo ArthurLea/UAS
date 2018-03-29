@@ -140,12 +140,12 @@
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="DeviceInfQuery.cpp" />
     <ClCompile Include="DlgEqualLevel.cpp" />
+    <ClCompile Include="EventNoticeDistribute.cpp" />
     <ClCompile Include="FlowQuery.cpp" />
     <ClCompile Include="Invite.cpp" />
     <ClCompile Include="md5.c" />
     <ClCompile Include="MySocket.cpp" />
     <ClCompile Include="NetSet.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="PSTVSetTime.cpp" />
     <ClCompile Include="PTZ.cpp" />
     <ClCompile Include="SetTestMember.cpp" />
@@ -170,12 +170,12 @@
     <ClInclude Include="DeviceInfQuery.h" />
     <ClInclude Include="DlgEqualLevel.h" />
     <ClInclude Include="DXP.h" />
+    <ClInclude Include="EventNoticeDistribute.h" />
     <ClInclude Include="FlowQuery.h" />
     <ClInclude Include="Invite.h" />
     <ClInclude Include="md5.h" />
     <ClInclude Include="MySocket.h" />
     <ClInclude Include="NetSet.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="PSTVSetTime.h" />
     <ClInclude Include="PTZ.h" />
     <ClInclude Include="Resource.h" />

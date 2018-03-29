@@ -68,7 +68,7 @@ void CFlowQuery::OnBnClickedFlowquery()
 	strTemp="<?xml version=\"1.0\"?>\r\n";
 	strTemp+="<Action>\r\n";	
 	strTemp+="<Query>\r\n";
-	strTemp+="<Variable>BandWidth</Variable>\r\n";
+	strTemp+="<CmdType>BandWidth</CmdType>\r\n";
 	strTemp+="<Privilege>"+UserCode+"</Privilege>\r\n";
     // 	strTemp+="<Address>"+Address+"</Address>\r\n";
     // 	strTemp+="<FromIndex>"+CString("1")+"</FromIndex>\r\n";

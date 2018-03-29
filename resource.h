@@ -2,6 +2,7 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 UAS.rc 使用
 //
+#define IDOK                            1
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101
@@ -15,7 +16,6 @@
 #define IDD_DLG_ALARM                   133
 #define IDD_DLG_TESTMEMBER              134
 #define IDD_DLG_LOG                     135
-#define IDD_DLG_PLAYER                  136
 #define IDD_DLG_VIDEOQUERY              138
 #define IDD_DLG_VIDEOPLAY               139
 #define IDB_BITMAP1                     140
@@ -25,6 +25,7 @@
 #define IDD_EQUAL                       144
 #define IDD_DIG_PSTVTTIME               152
 #define IDD_DLG_CAPIMG                  156
+#define IDD_DIG_ALARMEVENT_NOTICE_DISTRIBUTE 160
 #define IDC_COMBO1                      1000
 #define IDC_BTN_SET                     1001
 #define IDC_BTN_OPEN_SIP                1002
@@ -90,12 +91,12 @@
 #define IDC_BTN_PLAY                    1059
 #define IDC_EDT_URL                     1060
 #define IDC_BTN_CANCEL                  1060
-#define IDC_VLCPLAY                     1061
 #define IDC_BTN_PLAY2                   1061
-#define IDC_STR_URL                     1063
 #define IDC_EDT_PRIVILEGE               1065
 #define IDC_EDT_FILETYPE                1066
+#define IDC_EDT_DEVICE_SN               1066
 #define IDC_EDT_MAXFILENUM              1067
+#define IDC_EDT_SECRECY                 1067
 #define IDC_EDT_ENDTIME                 1068
 #define IDC_EDT_BEGINTIME               1069
 #define IDC_EDT_FILESIZE                1070
@@ -133,10 +134,15 @@
 #define IDC_EDIT_DEVICEINFO             1100
 #define IDC_EDIT_NOTEINFO               1100
 #define IDC_EDIT_PRIVILEGE              1100
+#define IDC_EDIT_SN                     1100
+#define IDC_EDIT_EVENT_DEVICEID         1100
 #define IDC_SUBNOTE                     1101
 #define IDC_EDIT_CAPTYPE                1101
+#define IDC_EDIT_EVENT_ALARMTIME        1101
 #define IDC_SELADRESS                   1102
+#define IDC_EDIT_EVENT_ALARM_METHOD     1102
 #define IDC_CHECK1                      1103
+#define IDC__ALARMEVENT_SELADRESS       1103
 #define IDC_PTZUP                       1104
 #define IDC_SELADRESS2                  1104
 #define IDC_SELalarmtype                1104
@@ -145,6 +151,7 @@
 #define IDC_BUTTON_REBOOT               1105
 #define IDC_BUTTON_NTPTIME              1105
 #define IDC_BUTTON_DOCAPTURE            1105
+#define IDC_BUTTON_NOTICE_DISTRIBUTE    1105
 #define IDC_PZTDOWN                     1106
 #define IDC_COMBO2                      1106
 #define IDC_COMBO_IP                    1106
@@ -155,8 +162,11 @@
 #define IDC_EDIT_IMAGEQUALITY           1107
 #define IDC_EDIT_TIME                   1107
 #define IDC_EDIT_CAMADD                 1107
+#define IDC_EDIT_EVENT_SN               1107
+#define IDC_EDIT_CHILDID                1107
 #define IDC_PTZUP2                      1108
 #define IDC_EDIT_FLOWQUERY              1108
+#define IDC_EDIT_EVENT_PRIORITY         1108
 #define IDC_PTZUP3                      1109
 #define IDC_BUTTON_SETTIME              1109
 #define IDC_PTZUP4                      1110
@@ -166,14 +176,16 @@
 #define IDC_PTZUP7                      1113
 #define IDC_EDIT_URL                    1113
 #define IDC_BTN_GETREALSTREAM           1114
+#define IDC_EDT_CONTROLPRIORITY         1115
+#define IDC_STATIC_SECRECY              1116
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        160
+#define _APS_NEXT_RESOURCE_VALUE        162
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1115
+#define _APS_NEXT_CONTROL_VALUE         1117
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

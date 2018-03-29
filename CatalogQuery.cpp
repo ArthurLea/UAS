@@ -9,6 +9,7 @@
 #include "SipMsgProcess.h"
 // CCatalogQuery 对话框
 
+extern InfoNotify NotifyInfo;
 extern InfoServer m_InfoServer;
 extern InfoClient m_InfoClient;
 extern CString ShowTestTitle;
@@ -32,53 +33,38 @@ CCatalogQuery::~CCatalogQuery()
 void CCatalogQuery::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_SUBNOTE, m_subNoteAddress);
+	DDX_Control(pDX, IDC_SUBNOTE, m_selAddress);
 }
 
 
 BEGIN_MESSAGE_MAP(CCatalogQuery, CDialogEx)
 	ON_BN_CLICKED(IDC_DEVICEINFQUERY2, &CCatalogQuery::OnBnClickedDeviceinotequery)
 	ON_BN_CLICKED(IDC_QUERY, &CCatalogQuery::OnBnClickedQuery)
+	ON_CBN_SELCHANGE(IDC_SUBNOTE, &CCatalogQuery::OnCbnSelchangeSubnote)
 END_MESSAGE_MAP()
 
 
 // CCatalogQuery 消息处理程序
 void CCatalogQuery::OnBnClickedQuery()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	HWND   hnd = ::FindWindow(NULL, _T("UAS"));
 	CUASDlg*  pWnd = (CUASDlg*)CWnd::FromHandle(hnd);
-	//release the Video information memory
-	vector<InfoVideo>().swap(pWnd->m_VideoInfo);
-	//m_HistoryVideoList.ResetContent();
-	CString UserCode;//权限功能码
-	CString Address;
-	CString FileType;
-	CString MaxFileNum;
-	CString BeginTime;
-	CString EndTime;
-	GetDlgItem(IDC_EDT_PRIVILEGE)->GetWindowText(UserCode);
-	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(Address);
-	pWnd->catalogAddress = Address;
+	CString SN;
+	CString DeviceID;
+	GetDlgItem(IDC_EDT_PRIVILEGE)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADDRESS)->GetWindowText(DeviceID);
+	pWnd->catalogAddress = DeviceID;
 	CString strTemp;
 	strTemp = "<?xml version=\"1.0\"?>\r\n";
-	strTemp += "<Action>\r\n";
 	strTemp += "<Query>\r\n";
-	strTemp += "<Variable>ItemList</Variable>\r\n";
-	strTemp += "<Privilege>" + UserCode + "</Privilege>\r\n";
-	strTemp += "<Address>" + Address + "</Address>\r\n";
-	strTemp += "<FromIndex>" + CString("1") + "</FromIndex>\r\n";
-	strTemp += "<ToIndex>" + CString("200") + "</ToIndex>\r\n";
-	// 	strTemp+="<FileType>"+FileType+"</FileType>\r\n";
-	// 	strTemp+="<MaxFileNum>"+MaxFileNum+"</MaxFileNum>\r\n";
-	// 	strTemp+="<BeginTime>"+BeginTime+"</BeginTime>\r\n";
-	// 	strTemp+="<EndTime>"+EndTime+"</EndTime>\r\n";	
+	strTemp += "<CmdType>Catalog</CmdType>\r\n";
+	strTemp += "<SN>" + SN + "</SN>\r\n";
+	strTemp += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
 	strTemp += "</Query>\r\n";
-	strTemp += "</Action>\r\n";
 	char *xml = (LPSTR)(LPCTSTR)strTemp;
 	char *buf = new char[MAXBUFSIZE];
 	CSipMsgProcess *sipCatalogQuery = new CSipMsgProcess;
-	sipCatalogQuery->CatalogQuerySipXmlMsg(&buf, m_InfoServer, Address, m_InfoClient, xml);
+	sipCatalogQuery->CatalogQuerySipXmlMsg(&buf, m_InfoServer, DeviceID, m_InfoClient, xml);
 	//send message to client
 	if (m_InfoClient.Port == "" || m_InfoClient.IP == "")
 	{
@@ -95,47 +81,41 @@ void CCatalogQuery::OnBnClickedQuery()
 	//pWnd->ShowSendData(buf);
 	delete buf;
 	//update log
-	ShowTestData = "DO --------->\r\n";
+	ShowTestData = "Message --------->\r\n";
 	ShowTestTitle = "Catalog Query Test";
 	SCallId.nStatus = CatalogQuery;
+}
+
+BOOL CCatalogQuery::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+	GetDlgItem(IDC_EDT_ADDRESS)->SetWindowTextA(m_InfoClient.UserAddress);
+	GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowTextA("17430"); 
+	GetDlgItem(IDC_EDT_DEVICE_SN)->SetWindowTextA("248"); 
+
+	return TRUE;
 }
 
 void CCatalogQuery::OnBnClickedDeviceinotequery()
 {
 	HWND   hnd = ::FindWindow(NULL, _T("UAS"));
 	CUASDlg*  pWnd = (CUASDlg*)CWnd::FromHandle(hnd);
-	//release the Video information memory
-	vector<InfoVideo>().swap(pWnd->m_VideoInfo);
-	//m_HistoryVideoList.ResetContent();
-	CString Privilege;//权限功能码
-	CString Address;
-	CString FileType;
-	CString MaxFileNum;
-	CString BeginTime;
-	CString EndTime;
-	GetDlgItem(IDC_EDT_PRIVILEGE)->GetWindowText(Privilege);
-	GetDlgItem(IDC_SUBNOTE)->GetWindowText(Address);
-	if (Address.Compare("") == 0)
-	{
-		MessageBox("子节点地址编码为空！", "UAS 提示", MB_OK | MB_ICONINFORMATION);
-		return;
-	}
-	//pWnd->catalogAddress=Address;
+	CString SN;
+	CString DeviceID;
+	GetDlgItem(IDC_EDT_DEVICE_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDIT_CHILDID)->GetWindowText(DeviceID);
+	pWnd->catalogAddress = DeviceID;
 	CString strTemp;
 	strTemp = "<?xml version=\"1.0\"?>\r\n";
-	strTemp += "<Action>\r\n";
 	strTemp += "<Query>\r\n";
-	strTemp += "<Variable>ItemList</Variable>\r\n";
-	strTemp += "<Privilege>" + Privilege + "</Privilege>\r\n";
-	strTemp += "<Address>" + Address + "</Address>\r\n";
-	strTemp += "<FromIndex>" + CString("1") + "</FromIndex>\r\n";
-	strTemp += "<ToIndex>" + CString("200") + "</ToIndex>\r\n";
+	strTemp += "<CmdType>DeviceStatus</CmdType>\r\n";
+	strTemp += "<SN>" + SN + "</SN>\r\n";
+	strTemp += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
 	strTemp += "</Query>\r\n";
-	strTemp += "</Action>\r\n";
 	char *xml = (LPSTR)(LPCTSTR)strTemp;
 	char *buf = new char[MAXBUFSIZE];
-	CSipMsgProcess *sipCatalogQuery = new CSipMsgProcess;
-	sipCatalogQuery->CatalogQuerySipXmlMsg(&buf, m_InfoServer, pWnd->catalogAddress/*Address*/, m_InfoClient, xml);
+	CSipMsgProcess *sipDeviceStatusQuery = new CSipMsgProcess;
+	sipDeviceStatusQuery->DeviceStatusQueryXmlMsg(&buf, m_InfoServer, DeviceID, m_InfoClient, xml);
 	//send message to client
 	if (m_InfoClient.Port == "" || m_InfoClient.IP == "")
 	{
@@ -157,3 +137,11 @@ void CCatalogQuery::OnBnClickedDeviceinotequery()
 	SCallId.nStatus = CatalogQuery;
 }
 
+
+
+void CCatalogQuery::OnCbnSelchangeSubnote()
+{
+	int index = m_selAddress.GetCurSel();
+	CString Address = NotifyInfo.Devices[index].Address;
+	GetDlgItem(IDC_EDIT_CHILDID)->SetWindowTextA(Address); 
+}

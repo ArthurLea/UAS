@@ -24,6 +24,7 @@ InfoNotify NotifyInfo;
 ofstream uas_msg_log;
 BOOL bNetSet;
 StatusCallID SCallId;
+StatusCallID SEventAlarmNoticeDistributeID;//报警事件的通知和分发
 StatusCallID SAlarmCallID;//预警需要使用的Call_ID等字段信息，用于数据缓存
 StatusCallID sInviteCallID;
 CallID InviteKeepAliveID;
@@ -223,11 +224,11 @@ BOOL CUASDlg::OnInitDialog()
 	InitNetSet();
 	InitInvite();
 	InitPTZ();
-	InitHistoryVideoQuery();
+	//InitHistoryVideoQuery();
 	InitHistoryVideoPlay();
 	InitAlarm();
-	InitCatalogQuery();
-	InitDeviceInfQuery();
+	//InitCatalogQuery();
+	//InitDeviceInfQuery();
 	InitFlowQuery();
 	InitCoderSet();
 	InitEnableWindow();
@@ -357,16 +358,23 @@ void CUASDlg::InitProgram()
 	//初始化标签页
 	m_Ctab.InsertItem(0, _T("网络设置"));
 	m_Ctab.InsertItem(1, _T("实时流"));
-	m_Ctab.InsertItem(2, _T("云台控制"));
+	m_Ctab.InsertItem(2, _T("设备控制"));
 	m_Ctab.InsertItem(3, _T("视频查询"));
 	m_Ctab.InsertItem(4, _T("视频回放"));
 	m_Ctab.InsertItem(5, _T("报警测试"));
-	m_Ctab.InsertItem(6, _T("目录查询"));
+	m_Ctab.InsertItem(6, _T("目录查询及设备状态查询"));
 	m_Ctab.InsertItem(7, _T("设备信息查询"));
 	m_Ctab.InsertItem(8, _T("流量查询"));
 	m_Ctab.InsertItem(9, _T("编码器设置"));
 	m_Ctab.InsertItem(10, _T("时间被动设置"));
-	m_Ctab.InsertItem(11,_T("监控抓图"));
+	m_Ctab.InsertItem(11, _T("监控抓图"));
+	/****************************************/
+	/*add some function for GB28181**********/
+	/****************************************/
+	m_Ctab.InsertItem(12,_T("报警事件通知与分析"));
+
+
+
 	//为标签页添加初始化对话框
 	m_NetSet.Create(IDD_DLG_NETSET, GetDlgItem(IDC_TAB));
 	m_Invite.Create(IDD_DLG_INVITE, GetDlgItem(IDC_TAB));
@@ -379,7 +387,15 @@ void CUASDlg::InitProgram()
 	m_FlowQuery.Create(IDD_DLG_FLOWQUERY, GetDlgItem(IDC_TAB));
 	m_CoderSet.Create(IDD_DLG_CODERSET, GetDlgItem(IDC_TAB)); 
 	m_PSTVSetTime.Create(IDD_DIG_PSTVTTIME, GetDlgItem(IDC_TAB));
-	m_CaptureImg.Create(IDD_DLG_CAPIMG,GetDlgItem(IDC_TAB));
+	m_CaptureImg.Create(IDD_DLG_CAPIMG, GetDlgItem(IDC_TAB));
+
+	/****************************************/
+	/*add some function for GB28181**********/
+	/****************************************/
+	m_CeventNotice.Create(IDD_DIG_ALARMEVENT_NOTICE_DISTRIBUTE,GetDlgItem(IDC_TAB));
+
+
+
 	//获得IDC_TAB客户区大小
 	CRect rect;
 	m_Ctab.GetClientRect(&rect);
@@ -401,6 +417,12 @@ void CUASDlg::InitProgram()
 	m_CoderSet.MoveWindow(&rect);
 	m_PSTVSetTime.MoveWindow(&rect);
 	m_CaptureImg.MoveWindow(&rect);
+
+	/****************************************/
+	/*add some function for GB28181**********/
+	/****************************************/
+	m_CeventNotice.MoveWindow(&rect);
+
 	//分别设置隐藏和显示
 	m_NetSet.ShowWindow(true);
 	//设置默认的选项卡
@@ -463,6 +485,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);	
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 1:
 		m_NetSet.ShowWindow(false);
@@ -477,6 +500,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 2:
 		m_NetSet.ShowWindow(false);
@@ -491,6 +515,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 3:
 		m_NetSet.ShowWindow(false);
@@ -505,6 +530,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 4:
 		m_NetSet.ShowWindow(false);
@@ -519,6 +545,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 5:
 		m_NetSet.ShowWindow(false);
@@ -533,6 +560,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 6:
 		m_NetSet.ShowWindow(false);
@@ -547,6 +575,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 7:
 		m_NetSet.ShowWindow(false);
@@ -561,6 +590,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 8:
 		m_NetSet.ShowWindow(false);
@@ -575,6 +605,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 9:
 		m_NetSet.ShowWindow(false);
@@ -589,6 +620,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(true);
 		m_PSTVSetTime.ShowWindow(false);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break;
 	case 10:
 		m_NetSet.ShowWindow(false);
@@ -603,6 +635,7 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(true);
 		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(false);
 		break; 
 	case 11:
 		m_NetSet.ShowWindow(false);
@@ -616,8 +649,24 @@ void CUASDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_FlowQuery.ShowWindow(false);
 		m_CoderSet.ShowWindow(false);
 		m_PSTVSetTime.ShowWindow(false);
-		m_CaptureImg.ShowWindow(true); 
-		break;
+		m_CaptureImg.ShowWindow(true);
+		m_CeventNotice.ShowWindow(false);
+		break; 
+	case 12:
+		m_NetSet.ShowWindow(false);
+		m_Invite.ShowWindow(false);
+		m_PTZ.ShowWindow(false);
+		m_VideoQuery.ShowWindow(false);
+		m_VideoPlay.ShowWindow(false);
+		m_Alarm.ShowWindow(false);
+		m_CatalogQuery.ShowWindow(false);
+		m_DeviceInfQuery.ShowWindow(false);
+		m_FlowQuery.ShowWindow(false);
+		m_CoderSet.ShowWindow(false);
+		m_PSTVSetTime.ShowWindow(false);
+		m_CaptureImg.ShowWindow(false);
+		m_CeventNotice.ShowWindow(true);
+		break; 
 	default:
 		break;
 	}
@@ -761,25 +810,26 @@ void CUASDlg::InitInvite()
 //初始化云台控制属性页
 void CUASDlg::InitPTZ()
 {
-	m_PTZ.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("20");
-	m_PTZ.GetDlgItem(IDC_EDT_PTZ)->SetWindowText("0x0402");
-	m_PTZ.GetDlgItem(IDC_EDT_ADD)->SetWindowText("地址编码");
+	m_PTZ.GetDlgItem(IDC_EDIT_SN)->SetWindowText("11");
+	m_PTZ.GetDlgItem(IDC_EDT_ADD)->SetWindowText("011051430001");
+	m_PTZ.GetDlgItem(IDC_EDT_PTZ)->SetWindowText("A50F4D1000001021");
+	m_PTZ.GetDlgItem(IDC_EDT_CONTROLPRIORITY)->SetWindowText("5");
 	m_PTZ.GetDlgItem(IDC_EDT_PTL)->SetWindowText("null");
 	m_PTZ.GetDlgItem(IDC_EDT_BEGINNUM)->SetWindowText("1");
 	m_PTZ.GetDlgItem(IDC_EDT_ENDNUM)->SetWindowText("10");
 }
 
 //初始化视频查询属性页
-void CUASDlg::InitHistoryVideoQuery()
-{
-	m_VideoQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
-	m_VideoQuery.GetDlgItem(IDC_EDT_FILETYPE)->SetWindowText("1");
-	m_VideoQuery.GetDlgItem(IDC_EDT_BEGINTIME)->SetWindowText("2016-05-20T13:50:50Z");
-	m_VideoQuery.GetDlgItem(IDC_EDT_ENDTIME)->SetWindowText("2017-06-05T14:50:50Z");
-	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM)->SetWindowText("0");
-	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM2)->SetWindowText("3");
-	m_VideoQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
-}
+//void CUASDlg::InitHistoryVideoQuery()
+//{
+//	m_VideoQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("43");
+//	m_VideoQuery.GetDlgItem(IDC_EDT_FILETYPE)->SetWindowText("time");
+//	m_VideoQuery.GetDlgItem(IDC_EDT_BEGINTIME)->SetWindowText("2016-05-20T13:50:50Z");
+//	m_VideoQuery.GetDlgItem(IDC_EDT_ENDTIME)->SetWindowText("2017-06-05T14:50:50Z");
+//	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM)->SetWindowText("0");
+//	m_VideoQuery.GetDlgItem(IDC_EDT_MAXFILENUM2)->SetWindowText("设备地址");
+//	m_VideoQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("设备地址");
+//}
 
 //初始化视频回放属性页
 void CUASDlg::InitHistoryVideoPlay()
@@ -807,28 +857,28 @@ void CUASDlg::InitCoderSet()
 void CUASDlg::InitAlarm()
 {
 	m_Alarm.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");
-	m_Alarm.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("20");
-	m_Alarm.GetDlgItem(IDC_EDT_LEVEL)->SetWindowText("1");
+	m_Alarm.GetDlgItem(IDC_EDT_USERCODE)->SetWindowText("1");
+	m_Alarm.GetDlgItem(IDC_EDT_LEVEL)->SetWindowText("4");
 	m_Alarm.m_AlarmTypeSel.SetCurSel(0);
 	m_Alarm.GetDlgItem(IDC_EDT_ALARM_TYPE)->SetWindowText("1");
-	m_Alarm.GetDlgItem(IDC_EDT_IP)->SetWindowText("192.168.17.99");
-	m_Alarm.GetDlgItem(IDC_EDT_PORT)->SetWindowText("5060");
+	m_Alarm.GetDlgItem(IDC_EDT_IP)->SetWindowText("2010-11-11T00:00:00");
+	m_Alarm.GetDlgItem(IDC_EDT_PORT)->SetWindowText("2099-12-11T00:00:00");
 
 }
 
-void CUASDlg::InitCatalogQuery()
-{
-	m_CatalogQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
-	m_CatalogQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");//UAC 地址编码 252000001199000001
-}
+//void CUASDlg::InitCatalogQuery()
+//{
+//	m_CatalogQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
+//	m_CatalogQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");//UAC 地址编码 252000001199000001
+//}
 
-void CUASDlg::InitDeviceInfQuery()
-{
-	m_DeviceInfQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
-	m_DeviceInfQuery.GetDlgItem(IDC_SELADRESS)->SetWindowText("Catalog");
-	m_DeviceInfQuery.m_selAddress.SetCurSel(0);
-	m_DeviceInfQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");
-}
+//void CUASDlg::InitDeviceInfQuery()
+//{
+//	m_DeviceInfQuery.GetDlgItem(IDC_EDT_PRIVILEGE)->SetWindowText("20");
+//	m_DeviceInfQuery.GetDlgItem(IDC_SELADRESS)->SetWindowText("Catalog");
+//	m_DeviceInfQuery.m_selAddress.SetCurSel(0);
+//	m_DeviceInfQuery.GetDlgItem(IDC_EDT_ADDRESS)->SetWindowText("011061430001");
+//}
 
 void CUASDlg::InitFlowQuery()
 {
@@ -1232,7 +1282,7 @@ void CUASDlg::OnTimer(UINT_PTR nIDEvent)
 			string xml = "<?xml version=\"1.0\"?>\r\n";
 			xml += "<Action>\r\n";
 			xml += "<Notify>\r\n";
-			xml += "<Variable>RealTimeKeepLive</Variable>\r\n";
+			xml += "<CmdType>RealTimeKeepLive</CmdType>\r\n";
 			xml += "</Notify>\r\n";
 			xml += "</Action>\r\n";
 			char *strxml = new char[XMLSIZE];
@@ -1320,9 +1370,9 @@ int CUASDlg::AnalyseMsg(char* msg)
 	string strTemp(msg);
 	string temp;
 	string dest;
-	string::size_type VariableStart;
-	if ((VariableStart = strTemp.find("CSeq: 2", 0)) != string::npos &&
-		(VariableStart = strTemp.find("Public:", 0)) != string::npos)
+	string::size_type CmdTypeStart;
+	if ((CmdTypeStart = strTemp.find("CSeq: 2", 0)) != string::npos &&
+		(CmdTypeStart = strTemp.find("Public:", 0)) != string::npos)
 	{
 		if (!brtspKeeplive)
 		{
@@ -1345,7 +1395,7 @@ int CUASDlg::AnalyseMsg(char* msg)
 			return 0;
 		}
 	}
-	else if ((VariableStart = strTemp.find("CSeq: 3", 0)) != string::npos)
+	else if ((CmdTypeStart = strTemp.find("CSeq: 3", 0)) != string::npos)
 	{
 		CString strdestIP;
 		CString strdestPort;
@@ -1364,7 +1414,7 @@ int CUASDlg::AnalyseMsg(char* msg)
 		SendTCPMsg(dest.c_str());
 		//ShowSendData(dest.c_str());
 	}
-	else if ((VariableStart = strTemp.find("CSeq: 4", 0)) != string::npos)
+	else if ((CmdTypeStart = strTemp.find("CSeq: 4", 0)) != string::npos)
 	{
 		dest = "PLAY ";
 		dest += rtspUrl;
@@ -1376,11 +1426,11 @@ int CUASDlg::AnalyseMsg(char* msg)
 		dest += "CSeq: " + cesq + "\r\n";
 		dest += "User-Agent: VLC Media player\r\n";
 		string temp1;
-		string::size_type VariableEnd;
-		if ((VariableStart = strTemp.find("Session", VariableStart + 1)) != string::npos)
-			if ((VariableEnd = strTemp.find("\r\n", VariableStart + 1)) != string::npos)
+		string::size_type CmdTypeEnd;
+		if ((CmdTypeStart = strTemp.find("Session", CmdTypeStart + 1)) != string::npos)
+			if ((CmdTypeEnd = strTemp.find("\r\n", CmdTypeStart + 1)) != string::npos)
 			{
-				temp1 = strTemp.substr(VariableStart + 8, VariableEnd - VariableStart - 5);
+				temp1 = strTemp.substr(CmdTypeStart + 8, CmdTypeEnd - CmdTypeStart - 5);
 				bSeesion = TRUE;
 				char* str = new char[100];
 				strcpy(str, temp1.c_str());

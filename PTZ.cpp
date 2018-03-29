@@ -89,26 +89,25 @@ END_MESSAGE_MAP()
 
 void CPTZ::OnBnClickedBtnTest()
 {
-	// TODO: Add your control notification handler code here		
-	//get information and create XML message
-	CString UserCode;
+	CString SN;
+	CString DeviceID;	
 	CString PTZCommand;
-	CString Address;	
-	CString Protocol;	
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
 	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
-	GetDlgItem(IDC_EDT_ADD)->GetWindowText(Address);
-	//GetDlgItem(IDC_EDT_PTL)->GetWindowText(Protocol);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	//XmlPTZ+="<Address>"+Address+"</Address>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";	
+	XmlPTZ ="<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ +="<SN>"+ SN + "</SN>\r\n";
+	XmlPTZ +="<DeviceID>"+ DeviceID +"</DeviceID>\r\n";
+	XmlPTZ +="<PTZCmd>"+PTZCommand+"</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ +="<ControlPriority>"+ ControlPriority +"</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ +="</Control>\r\n";
 	//WaitForSingleObject(hMutex_uas,INFINITE);
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
@@ -116,9 +115,8 @@ void CPTZ::OnBnClickedBtnTest()
 	CSipMsgProcess *SipPTZ=new CSipMsgProcess;	
 	char *SipXmlPTZ=new char[MAXBUFSIZE];
 	memset(SipXmlPTZ,0,MAXBUFSIZE);	
-	//SipPTZ->SipXmlMsg(&SipXmlPTZ,m_InfoServer,m_InfoClient,destXMLPTZ);
+	//SipPTZ->SipPtzMsg(&SipXmlPTZ, m_InfoServer, pWnd->inviteAddress, m_InfoClient, destXMLPTZ);
 	SipPTZ->SipPtzMsg(&SipXmlPTZ,m_InfoServer,pWnd->inviteAddress,m_InfoClient,destXMLPTZ);
-	//send message to client
 	if (m_InfoClient.Port=="" || m_InfoClient.IP=="")
 	{		
 		delete SipXmlPTZ;
@@ -150,7 +148,7 @@ void CPTZ::OnBnClickedBtnPre()
 	CString Address;
 	GetDlgItem(IDC_EDT_BEGINNUM)->GetWindowText(beginNum);
 	//GetDlgItem(IDC_EDT_ENDNUM)->GetWindowText(endNum);
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(UserCode);
 	GetDlgItem(IDC_EDT_ADD)->GetWindowText(Address);
 	//tPTZQuery.ptzQueryNumbegin=beginNum;
 	//tPTZQuery.ptzQueryNumend=endNum;
@@ -164,7 +162,7 @@ void CPTZ::OnBnClickedBtnPre()
 	XmlPreBitQuery="<?xml version=\"1.0\"?>\r\n";
 	XmlPreBitQuery+="<Action>\r\n";	
 	XmlPreBitQuery+="<Query>\r\n";	
-	XmlPreBitQuery+="<Variable>PresetList</Variable>\r\n";
+	XmlPreBitQuery+="<CmdType>PresetList</CmdType>\r\n";
 	XmlPreBitQuery+="<Privilege>"+UserCode+"</Privilege>\r\n";
 	//XmlPreBitQuery+="<FromIndex>"+beginNum+"</FromIndex>\r\n";
 	//XmlPreBitQuery+="<ToIndex>"+endNum+"</ToIndex>\r\n";
@@ -208,32 +206,39 @@ void CPTZ::OnCbnSelchangeSeladress()
 
 void CPTZ::OnBnClickedPtzup()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZUP)->SetWindowText(_T("停"));
-		PTZCommand="0x0401";
-		bAlter=FALSE;
+		PTZCommand = "0x0401";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP)->SetWindowText(_T("上"));
-		PTZCommand="0x0402";
-		bAlter=TRUE;
+		PTZCommand = "0x0402";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -265,32 +270,39 @@ void CPTZ::OnBnClickedPtzup()
 
 void CPTZ::OnBnClickedPtzleft()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZLEFT)->SetWindowText(_T("停"));
-		PTZCommand="0x0503";
-		bAlter=FALSE;
+		PTZCommand = "0x0503";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZLEFT)->SetWindowText(_T("左"));
-		PTZCommand="0x0504";
-		bAlter=TRUE;
+		PTZCommand = "0x0504";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -322,32 +334,39 @@ void CPTZ::OnBnClickedPtzleft()
 
 void CPTZ::OnBnClickedPtzright()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZRIGHT)->SetWindowText(_T("停"));
-		PTZCommand="0x0501";
-		bAlter=FALSE;
+		PTZCommand = "0x0501";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZRIGHT)->SetWindowText(_T("右"));
-		PTZCommand="0x0502";
-		bAlter=TRUE;
+		PTZCommand = "0x0502";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -379,32 +398,39 @@ void CPTZ::OnBnClickedPtzright()
 
 void CPTZ::OnBnClickedPztdown()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PZTDOWN)->SetWindowText(_T("停"));
-		PTZCommand="0x0403";
-		bAlter=FALSE;
+		PTZCommand = "0x0403";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PZTDOWN)->SetWindowText(_T("下"));
-		PTZCommand="0x0404";
-		bAlter=TRUE;
+		PTZCommand = "0x0404";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -438,8 +464,15 @@ void CPTZ::OnBnClickedPtzup2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	static BOOL bAlter=TRUE;
-	CString UserCode;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	
 	if(bAlter)
 	{
 		GetDlgItem(IDC_PTZUP2)->SetWindowText(_T("停"));
@@ -452,16 +485,18 @@ void CPTZ::OnBnClickedPtzup2()
 		PTZCommand="0x0102";
 		bAlter=TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -495,30 +530,38 @@ void CPTZ::OnBnClickedPtzup3()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	static BOOL bAlter=TRUE;
-	CString UserCode;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZUP3)->SetWindowText(_T("停"));
-		PTZCommand="0x0104";
-		bAlter=FALSE;
+		PTZCommand = "0x0104";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP3)->SetWindowText(_T("增大光圈"));
-		PTZCommand="0x0103";
-		bAlter=TRUE;
+		PTZCommand = "0x0103";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -550,32 +593,39 @@ void CPTZ::OnBnClickedPtzup3()
 
 void CPTZ::OnBnClickedPtzup4()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZUP4)->SetWindowText(_T("停"));
-		PTZCommand="0x0201";
-		bAlter=FALSE;
+		PTZCommand = "0x0201";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP4)->SetWindowText(_T("近聚焦"));
-		PTZCommand="0x0202";
-		bAlter=TRUE;
+		PTZCommand = "0x0202";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -607,32 +657,39 @@ void CPTZ::OnBnClickedPtzup4()
 
 void CPTZ::OnBnClickedPtzup5()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZUP5)->SetWindowText(_T("停"));
-		PTZCommand="0x0203";
-		bAlter=FALSE;
+		PTZCommand = "0x0203";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP5)->SetWindowText(_T("远聚焦"));
-		PTZCommand="0x0204";
-		bAlter=TRUE;
+		PTZCommand = "0x0204";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -664,32 +721,39 @@ void CPTZ::OnBnClickedPtzup5()
 
 void CPTZ::OnBnClickedPtzup6()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZUP6)->SetWindowText(_T("停"));
-		PTZCommand="0x0303";
-		bAlter=FALSE;
+		PTZCommand = "0x0303";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP6)->SetWindowText(_T("放大"));
-		PTZCommand="0x0304";
-		bAlter=TRUE;
+		PTZCommand = "0x0304";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		
@@ -721,32 +785,39 @@ void CPTZ::OnBnClickedPtzup6()
 
 void CPTZ::OnBnClickedPtzup7()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	static BOOL bAlter=TRUE;
-	CString UserCode;
+	static BOOL bAlter = TRUE;
+	CString SN;
+	CString DeviceID;
 	CString PTZCommand;
-	if(bAlter)
+	CString ControlPriority;
+	GetDlgItem(IDC_EDIT_SN)->GetWindowText(SN);
+	GetDlgItem(IDC_EDT_ADD)->GetWindowText(DeviceID);
+	GetDlgItem(IDC_EDT_PTZ)->GetWindowText(PTZCommand);
+	GetDlgItem(IDC_EDT_CONTROLPRIORITY)->GetWindowText(ControlPriority);
+	if (bAlter)
 	{
 		GetDlgItem(IDC_PTZUP7)->SetWindowText(_T("停"));
-		PTZCommand="0x0301";
-		bAlter=FALSE;
+		PTZCommand = "0x0301";
+		bAlter = FALSE;
 	}
 	else
 	{
 		GetDlgItem(IDC_PTZUP7)->SetWindowText(_T("缩小"));
-		PTZCommand="0x0302";
-		bAlter=TRUE;
+		PTZCommand = "0x0302";
+		bAlter = TRUE;
 	}
-	GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
+	//GetDlgItem(IDC_EDT_USERCODE)->GetWindowText(UserCode);
 	CString XmlPTZ;
-	XmlPTZ="<?xml version=\"1.0\"?>\r\n";
-	XmlPTZ+="<Action>\r\n";	
-	XmlPTZ+="<Control>\r\n";	
-	XmlPTZ+="<Variable>PTZCommand</Variable>\r\n";	
-	XmlPTZ+="<Privilege>"+UserCode+"</Privilege>\r\n";
-	XmlPTZ+="<Command>"+PTZCommand+"</Command>\r\n";
-	XmlPTZ+="</Control>\r\n";
-	XmlPTZ+="</Action>\r\n";
+	XmlPTZ = "<?xml version=\"1.0\"?>\r\n";
+	XmlPTZ += "<Control>\r\n";
+	XmlPTZ += "<CmdType>DeviceControl</CmdType>\r\n";
+	XmlPTZ += "<SN>" + SN + "</SN>\r\n";
+	XmlPTZ += "<DeviceID>" + DeviceID + "</DeviceID>\r\n";
+	XmlPTZ += "<PTZCmd>" + PTZCommand + "</PTZCmd>\r\n";
+	XmlPTZ += "<Info>\r\n";
+	XmlPTZ += "<ControlPriority>" + ControlPriority + "</ControlPriority>\r\n";
+	XmlPTZ += "</Info>\r\n";
+	XmlPTZ += "</Control>\r\n";
 	HWND   hnd=::FindWindow(NULL, _T("UAS"));	
 	CUASDlg*  pWnd= (CUASDlg*)CWnd::FromHandle(hnd);
 	char *destXMLPTZ= (LPSTR)(LPCTSTR)XmlPTZ;		

@@ -20,7 +20,9 @@ enum{Register,NodeType,Invite
 	,PTZ,PreBitSet,HistoryQuery
 	,CatalogQuery,DeviceInfQuery,
 	FlowQuery,HistoryPlay,EncoderSet,
-	Alarm,TimeSet,TimeGet,CaptureImage
+	Alarm,TimeSet,TimeGet,CaptureImage,
+
+	AlarmNoticeDistribute
 };
 //服务端的信息
 struct InfoServer

@@ -110,6 +110,10 @@ void CCaptureImage::OnBnClickedButtonDocapture()
 	CString UserCode;
 	CString CaptureType;
 	GetDlgItem(IDC_EDIT_CAMADD)->GetWindowText(CameraAddress);
+	string temp = CameraAddress;
+	char * address = new char[CameraAddress.GetLength()+1];
+	memset(address, 0, CameraAddress.GetLength() + 1);
+	strcpy(address, temp.c_str());
 	GetDlgItem(IDC_COMBO_PRIVILEGE)->GetWindowText(UserCode);
 	GetDlgItem(IDC_COMBO_CAPTYPE)->GetWindowText(CaptureType);
 
@@ -117,8 +121,8 @@ void CCaptureImage::OnBnClickedButtonDocapture()
 	XmlCapImgSet = "<?xml version=\"1.0\"?>\r\n";
 	XmlCapImgSet += "<Action>\r\n";
 	XmlCapImgSet += "<Control>\r\n";
-	XmlCapImgSet += "<Variable>CaptureImage</Variable>\r\n";
-	XmlCapImgSet += "<CameraAddress>" + CameraAddress + "</CameraAddress>\r\n";
+	XmlCapImgSet += "<CmdType>CaptureImage</CmdType>\r\n";
+	//XmlCapImgSet += "<CameraAddress>" + CameraAddress + "</CameraAddress>\r\n";
 	XmlCapImgSet += "<Privilege>" + UserCode + "</Privilege>\r\n";
 	XmlCapImgSet += "<CaptureType>" + CaptureType + "</CaptureType>\r\n";
 	XmlCapImgSet += "</Control>\r\n";
@@ -127,7 +131,7 @@ void CCaptureImage::OnBnClickedButtonDocapture()
 	CSipMsgProcess *SipAlarm = new CSipMsgProcess;
 	char *SipXmlCapImg = new char[MAXBUFSIZE];
 	memset(SipXmlCapImg, 0, MAXBUFSIZE);
-	SipAlarm->SipCaptureImageMsg(&SipXmlCapImg, m_InfoServer, m_InfoClient, destXMLCapImg);
+	SipAlarm->SipCaptureImageMsg(&SipXmlCapImg, m_InfoServer, m_InfoClient,address,destXMLCapImg);
 	//send message to client
 	if (m_InfoClient.Port == "" || m_InfoClient.IP == "")
 	{
